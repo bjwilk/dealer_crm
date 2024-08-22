@@ -1,0 +1,75 @@
+// Define your variables or use direct values
+$form-background-color: #f8f9fa; // Example background color for the form
+$input-background-color: #ffffff; // Example background color for input fields
+$error-color: #dc3545; // Example error color
+$form-button-background: #007bff; // Example background color for buttons
+$form-button-color: #ffffff; // Example text color for buttons
+$form-button-hover: #0056b3; // Example hover color for buttons
+
+// Apply styles
+.form-container {
+  background-color: $form-background-color;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+
+  h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .input-field {
+    display: block;
+    margin-bottom: 15px;
+    text-align: left;
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      background-color: $input-background-color;
+      box-sizing: border-box;
+    }
+  }
+
+  .error-container {
+    color: $error-color;
+    margin-bottom: 15px;
+
+    .error-message {
+      margin: 5px 0;
+    }
+  }
+
+  .button-group {
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: $form-button-background;
+      color: $form-button-color;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $form-button-hover;
+      }
+    }
+
+    a {
+      display: block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: $form-button-background;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
