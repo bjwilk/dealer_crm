@@ -1,4 +1,3 @@
-import { act } from "react";
 import { csrfFetch } from "./csrf";
 
 const LOAD_ACCOUNTS = "accounts/loadAccounts";
@@ -14,9 +13,9 @@ const accountOrders = (orders) => ({
 });
 
 
-const accountProfile = (id) => ({
+const accountProfile = (payload) => ({
   type: ACCOUNT_PROFILE,
-  payload: account
+  payload
 })
 
 const loadAccounts = (payload) => ({
@@ -54,17 +53,32 @@ export const fetchAccountOrders = (id) => async (dispatch) => {
 
 
 export const fetchAccountProfile = (id) => async (dispatch) => {
-  console.log(parseInt(id))
-  try{
-    const res = await csrfFetch(`api/accounts/company/${id}`);
-    if(res.ok){
+  try {
+    const res = await csrfFetch(`/api/accounts/company/${id}`);
+    if (res.ok) {
+      // console.log("Response OK:", res);
+      
+      // // Check headers and status
+      // console.log("Headers:", res.headers);
+      // console.log("Status:", res.status);
+
+      // Parse the JSON data
       const data = await res.json();
-      dispatch(accountProfile(data))
+      
+      // Log the data to see what's being returned
+      // console.log("Parsed Data:", data);
+      
+      // Dispatch the action with the data
+      dispatch(accountProfile(data));
+      return data;
+    } else {
+      console.error("Response not OK:", res.status, res.statusText);
     }
-  }catch (err){
-    console.error("Error fetching Account Profile", err)
+  } catch (err) {
+    console.error("Error fetching Account Profile:", err);
   }
-}
+};
+
 
 export const createNewAccount = (account) => async (dispatch) => { 
   try {
@@ -178,7 +192,6 @@ const accountReducer = (state = initialState, action) => {
     }
     case ACCOUNT_PROFILE: {
       const newState = { ...state };
-      console.log("Action", action.payload)
       newState[action.payload.id] = action.payload
       return newState
     }

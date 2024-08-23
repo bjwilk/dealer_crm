@@ -27,6 +27,10 @@ router.get("/company/:accountId", async (req, res, next) => {
         {
           model: Action,
           as: "actions"
+        },
+        {
+          model: Contact,
+          as: "contacts"
         }
       ],
     });
@@ -49,7 +53,7 @@ router.get("/orders/:id", async (req, res, next) => {
     const order = await Order.findByPk(req.params.id, {
       include: {
         model: Account,
-        as: "account", // Assuming you've defined 'account' as the alias in your Order model association
+        as: "account", 
       },
     });
     if (!order) {

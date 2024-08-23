@@ -1,67 +1,85 @@
-import React, { useEffect } from "react";
-import { useNavigate, useParams, Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link, NavLink } from "react-router-dom";
 // import Profile from "../Profile/Profile";
 import { useDispatch, useSelector } from "react-redux";
-// import { fetchAccountOrders, fetchAccountProfile } from "../../store/accounts";
+import { fetchAccountProfile } from "../../store/accounts";
 import './AccountProfile.scss'
 
 export default function AccountProfile() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate()
-  const profile = useSelector((state) => state.accounts[id]);
+  // const navigate = useNavigate()
+  const [profile, setProfile] = useState({})
+  // const accounts = useSelector((state) => state.accounts);
   const user = useSelector(state => state.session.user)
-
-  const usersActions = profile.actions.flatMap(action => action)
-  console.log(usersActions)
   const acctId = parseInt(id)
 
-// useEffect(() => {
-// dispatch(fetchAccountOrders())
-// },[])
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchAccountProfile(acctId)).then((response) => {
+        if (response) {
+          setProfile(response);
+        }
+      }).catch((error) => {
+        console.error("Failed to fetch account profile:", error);
+      });
+    }
+  }, [dispatch, acctId, user]);
 
-  // const fetchAccounts = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8000/api/accounts/company/${acctId}`,
-  //       {
-  //         method: "GET",
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch data");
-  //     }
-  //     const data = await response.json();
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+  if (!profile || !user) {
+    return <div>Loading...</div>;
+  }
 
-  // useEffect(() => {
-  //   if(user && profile && user.id === profile.ownerId){
+  let usersActions;
+  let accountContacts;
+ 
+  if (profile.actions && profile.contacts){
+   usersActions = profile.actions.flatMap(action => action)
+  accountContacts = profile.contacts.flatMap(contact => contact)
+  }
 
-  //     fetchAccounts();
-  //   }
-  // }, []);
-
-  function Actions(){
-
-    return(
+  function Contacts() {
+    return (
       <div className="account-filter">
         <div className="dashboard__accounts">
-        <h4>Actions</h4>
-        {
-          usersActions.map((action) => (
-            <div key={action.id}>
-                <p>Report: {action.report}</p>
-                <p>Detail: {action.details}</p>
-                <p>When: {action.reminder}</p>
-            </div>
-          ))}
+          <h4>Contacts</h4>
+          {accountContacts.length > 0 ? (
+            accountContacts.map((contact) => (
+              <div key={contact.id}>
+                  <p>{contact.name}</p>
+                  <p>{contact.position}</p>
+                  <p>{contact.phone}</p>
+              </div>
+            ))
+          ) : (
+            <p>No contacts available</p>
+          )}
+        </div>
       </div>
-      </div>
-    )
+    );
   }
+
+  function Actions() {
+    return (
+      <div className="account-filter">
+        <div className="dashboard__accounts">
+          <h4>Actions</h4>
+          {usersActions.length > 0 ? (
+            usersActions.map((action) => (
+              <div key={action.id}>
+                <NavLink>
+                  <p>Action: {action.report}</p>
+                </NavLink>
+              </div>
+            ))
+          ) : (
+            <p>No actions available</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
 
 
   return (
@@ -97,15 +115,22 @@ export default function AccountProfile() {
         ) : (
           <div>Must be logged in</div>
         )}
+              <div className="filter-cards">
+        {Object.values(profile).length > 0 ? (
+          <Contacts />
+        ) : (
+          <p>Loading actions...</p>
+        )}
+      </div>
+
       </div>
       <div className="filter-cards">
         {Object.values(profile).length > 0 ? (
           <Actions />
         ) : (
-          <Actions />
+          <p>Loading actions...</p>
         )}
       </div>
-
     </div>
   );
   
