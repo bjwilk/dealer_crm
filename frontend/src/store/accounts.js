@@ -6,6 +6,12 @@ const FILTER_ACCOUNTS = "accounts/filterAccounts";
 const CREATE_ACCOUNT = "accounts/createAccount"
 const ACCOUNT_PROFILE = "accounts/accountProfile"
 const ACCOUNT_ORDERS = "accounts/accountOrders";
+const UPDATE_ACCOUNT = "accounts/updateAccount";
+
+const updateAccount = (payload) => ({
+  type: UPDATE_ACCOUNT,
+  payload
+})
 
 const accountOrders = (orders) => ({
   type: ACCOUNT_ORDERS,
@@ -95,6 +101,31 @@ export const createNewAccount = (account) => async (dispatch) => {
           dispatch(createAccount(newAccount));
           return newAccount
       }
+  } catch (err) {
+      console.error("Error creating spot", err);
+  }
+}
+
+export const fetchUpdateAccount = (account) => async (dispatch) => { 
+  try {
+      const res = await csrfFetch(`/api/accounts/${account.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(account),
+    });
+
+
+    if (res.ok) {
+        const data = await res.json();
+
+      console.log('Data',data)
+
+        dispatch(updateAccount(account.id, data));
+    } else {
+        console.error("Failed to load album");
+    }
   } catch (err) {
       console.error("Error creating spot", err);
   }
@@ -205,6 +236,14 @@ const accountReducer = (state = initialState, action) => {
         },
       };
     }
+    case UPDATE_ACCOUNT: {
+      console.log(action.payload)
+      return {
+          ...state,
+           accounts: action.payload
+      };
+  }
+
     default:
       return state;
   }

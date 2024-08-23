@@ -12,6 +12,7 @@ import FilterAccounts from "./components/FilterAccounts/FilterAccounts";
 import AccountProfile from "./components/AccountProfile/AccountProfile";
 import SalesOrderForm from "./components/SalesOrderForm/SalesOrderForm";
 import SalesOrder from "./components/SalesOrder/SalesOrder";
+import UpdateAccount from "./components/UpdateAccount/UpdateAccount";
 
 function Layout() {
   const dispatch = useDispatch();
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "/account/:id",
         element: <AccountProfile />,
+      },
+      {
+        path: "/account/:id/edit",
+        element: <UpdateAccount />
       },
       {
         path: "/create-order/:id",

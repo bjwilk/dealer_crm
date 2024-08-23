@@ -172,10 +172,10 @@ const Profile = (props) => {
                         <input
                           type="checkbox"
                           name="lookingFor"
-                          value="DumpTruck"
+                          value="Dump Truck"
                           checked={
                             props.lookingFor &&
-                            props.lookingFor.includes("DumpTruck")
+                            props.lookingFor.includes("Dump Truck")
                           }
                           onChange={props.handleChange}
                         />
@@ -200,10 +200,10 @@ const Profile = (props) => {
                         <input
                           type="checkbox"
                           name="lookingFor"
-                          value="WaterTruck"
+                          value="Water Truck"
                           checked={
                             props.lookingFor &&
-                            props.lookingFor.includes("WaterTruck")
+                            props.lookingFor.includes("Water Truck")
                           }
                           onChange={props.handleChange}
                         />
@@ -214,10 +214,10 @@ const Profile = (props) => {
                         <input
                           type="checkbox"
                           name="lookingFor"
-                          value="BoxTruck"
+                          value="Box Truck"
                           checked={
                             props.lookingFor &&
-                            props.lookingFor.includes("BoxTruck")
+                            props.lookingFor.includes("Box Truck")
                           }
                           onChange={props.handleChange}
                         />
@@ -228,10 +228,10 @@ const Profile = (props) => {
                         <input
                           type="checkbox"
                           name="lookingFor"
-                          value="DayCab"
+                          value="Day Cab"
                           checked={
                             props.lookingFor &&
-                            props.lookingFor.includes("DayCab")
+                            props.lookingFor.includes("Day Cab")
                           }
                           onChange={props.handleChange}
                         />
@@ -242,10 +242,10 @@ const Profile = (props) => {
                         <input
                           type="checkbox"
                           name="lookingFor"
-                          value="SleeperTruck"
+                          value="Sleeper"
                           checked={
                             props.lookingFor &&
-                            props.lookingFor.includes("SleeperTruck")
+                            props.lookingFor.includes("Sleeper")
                           }
                           onChange={props.handleChange}
                         />
@@ -261,32 +261,6 @@ const Profile = (props) => {
             <div className="card mb-4">
               <div className="card-body">
                 <h3 className="h6 mb-4">Contact information</h3>
-                <div className="row">
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">First name</label>
-                      <input
-                        name="firstName"
-                        value={props.firstName}
-                        onChange={props.handleChange}
-                        type="text"
-                        className="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">Last name</label>
-                      <input
-                        name="lastName"
-                        value={props.lastName}
-                        onChange={props.handleChange}
-                        type="text"
-                        className="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <div className="col-lg-6">
                     <div className="mb-3">
