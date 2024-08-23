@@ -93,6 +93,10 @@ export default function AccountProfile() {
               <NavLink to={`/sales-order/${order.id}`}>
                 <p>VIN: {order.vin}</p>
               </NavLink>
+              <NavLink>
+              <button>Update</button>
+              </NavLink>
+              <button>Delete</button>
             </div>
           ))
         ) : (
@@ -101,7 +105,9 @@ export default function AccountProfile() {
       </div>
       <div className="dashboard__profile">
         <div>Account Profile</div>
-        <button>Update Account</button>
+        <NavLink to={`/account/${acctId}/edit`}>
+              <button>Update Profile</button>
+              </NavLink>
         {user && profile ? (
           <>
             <h2>{profile.companyName}</h2>

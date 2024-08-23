@@ -125,7 +125,7 @@ router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
 });
 
 // Update Account
-router.put("/company/:accountId", requireAuth, async (req, res, next) => {
+router.put("/:accountId", requireAuth, async (req, res, next) => {
   const accountId = req.params.accountId;
   const updatedAccountData = req.body; // Ensure that req.body only contains fields you want to update
 
