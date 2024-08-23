@@ -7,6 +7,12 @@ const CREATE_ACCOUNT = "accounts/createAccount"
 const ACCOUNT_PROFILE = "accounts/accountProfile"
 const ACCOUNT_ORDERS = "accounts/accountOrders";
 const UPDATE_ACCOUNT = "accounts/updateAccount";
+const CREATE_CONTACT = "accounts/createContact";
+
+const createContact = (payload) => ({
+  type: CREATE_CONTACT,
+  payload
+})
 
 const updateAccount = (payload) => ({
   type: UPDATE_ACCOUNT,
@@ -85,6 +91,25 @@ export const fetchAccountProfile = (id) => async (dispatch) => {
   }
 };
 
+export const fetchCreateContact = (accountId, contact) => async (dispatch) => {
+  try{
+    const res = await csrfFetch(`/api/accounts/company/${accountId}/contacts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(contact),
+    });
+
+    if (res.ok) {
+      const newContact = await res.json();
+      console.log({newContact})
+      dispatch(createContact(newContact));
+      return newContact;
+    }  } catch (err){
+    console.error("Error creating contact", err);
+  }
+}
 
 export const createNewAccount = (account) => async (dispatch) => { 
   try {
@@ -242,6 +267,12 @@ const accountReducer = (state = initialState, action) => {
           ...state,
            accounts: action.payload
       };
+  }
+  case CREATE_CONTACT: {
+    const newState = { ...state }
+    const newContact = action.payload;
+    newState[newContact.id] = newContact;
+    return newState;
   }
 
     default:

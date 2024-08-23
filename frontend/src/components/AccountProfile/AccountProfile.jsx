@@ -43,9 +43,12 @@ export default function AccountProfile() {
       <div className="account-filter">
         <div className="dashboard__accounts">
           <h4>Contacts</h4>
+          <NavLink to={`/account/${acctId}/contact`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Add Contact</button>
+          </NavLink>
           {accountContacts.length > 0 ? (
             accountContacts.map((contact) => (
-              <div key={contact.id}>
+              <div className="dashboard__accounts" key={contact.id}>
                   <p>{contact.name}</p>
                   <p>{contact.position}</p>
                   <p>{contact.phone}</p>
@@ -64,12 +67,16 @@ export default function AccountProfile() {
       <div className="account-filter">
         <div className="dashboard__accounts">
           <h4>Actions</h4>
+          <NavLink>
+            <button className="btn btn-primary btn-sm btn-icon-text">Add Action</button>
+          </NavLink>
           {usersActions.length > 0 ? (
             usersActions.map((action) => (
               <div key={action.id}>
                 <NavLink>
                   <p>Action: {action.report}</p>
                 </NavLink>
+                <button >Remove Action</button>
               </div>
             ))
           ) : (
@@ -86,7 +93,7 @@ export default function AccountProfile() {
     <div className="dashboard">
       <div className="dashboard__quotes">
         <span>Quotes</span>
-        <Link to={`/create-order/${acctId}`}><button>Create Sales Order</button></Link>
+        <Link to={`/create-order/${acctId}`}><button className="btn btn-primary btn-sm btn-icon-text">Create Sales Order</button></Link>
         {profile && profile.orders && profile.orders.length > 0 ? (
           profile.orders.map((order, index) => (
             <div key={index}>
@@ -94,7 +101,7 @@ export default function AccountProfile() {
                 <p>VIN: {order.vin}</p>
               </NavLink>
               <NavLink>
-              <button>Update</button>
+              <button >Update</button>
               </NavLink>
               <button>Delete</button>
             </div>
@@ -106,7 +113,7 @@ export default function AccountProfile() {
       <div className="dashboard__profile">
         <div>Account Profile</div>
         <NavLink to={`/account/${acctId}/edit`}>
-              <button>Update Profile</button>
+              <button className="btn btn-primary btn-sm btn-icon-text">Update Profile</button>
               </NavLink>
         {user && profile ? (
           <>
