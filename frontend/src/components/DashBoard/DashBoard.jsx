@@ -16,6 +16,29 @@ export default function DashBoard() {
   const user = useSelector((state) => state.session.user);
   const accounts = useSelector((state) => state.accounts);
 
+  const usersActions = Object.values(accounts).flatMap(action => action.actions)
+  console.log("Accounts:", usersActions)
+
+  function Actions(){
+
+    return(
+      <div className="account-filter">
+        <div className="dashboard__accounts">
+        <h4>Actions</h4>
+        {user &&
+          accounts &&
+          usersActions.map((action) => (
+            <div key={action.id}>
+              <NavLink to={`/account/${action.accountId}`}>
+                <p>Action: {action.report}</p>
+                </NavLink>
+            </div>
+          ))}
+      </div>
+      </div>
+    )
+  }
+
   useEffect(() => {
     dispatch(fetchUserAccounts());
   }, [dispatch]);
@@ -49,6 +72,14 @@ export default function DashBoard() {
           <FilterAccounts />
         )}
       </div>
+      <div className="filter-cards">
+        {Object.values(accounts).length > 0 ? (
+          <Actions />
+        ) : (
+          <Actions />
+        )}
+      </div>
+
     </div>
   );
   

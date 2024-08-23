@@ -12,7 +12,8 @@ export default function AccountProfile() {
   const profile = useSelector((state) => state.accounts[id]);
   const user = useSelector(state => state.session.user)
 
-console.log(profile)
+  const usersActions = profile.actions.flatMap(action => action)
+  console.log(usersActions)
   const acctId = parseInt(id)
 
 // useEffect(() => {
@@ -42,6 +43,25 @@ console.log(profile)
   //     fetchAccounts();
   //   }
   // }, []);
+
+  function Actions(){
+
+    return(
+      <div className="account-filter">
+        <div className="dashboard__accounts">
+        <h4>Actions</h4>
+        {
+          usersActions.map((action) => (
+            <div key={action.id}>
+                <p>Report: {action.report}</p>
+                <p>Detail: {action.details}</p>
+                <p>When: {action.reminder}</p>
+            </div>
+          ))}
+      </div>
+      </div>
+    )
+  }
 
 
   return (
@@ -78,6 +98,14 @@ console.log(profile)
           <div>Must be logged in</div>
         )}
       </div>
+      <div className="filter-cards">
+        {Object.values(profile).length > 0 ? (
+          <Actions />
+        ) : (
+          <Actions />
+        )}
+      </div>
+
     </div>
   );
   

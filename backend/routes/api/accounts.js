@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { Account, User, Order } = require("../../db/models");
+const { Account, User, Order, Contact, Action } = require("../../db/models");
 
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
@@ -24,6 +24,10 @@ router.get("/company/:accountId", async (req, res, next) => {
           model: Order,
           as: "orders",
         },
+        {
+          model: Action,
+          as: "actions"
+        }
       ],
     });
     if (!account) {
@@ -191,6 +195,14 @@ router.get("/current", requireAuth, async (req, res, next) => {
         model: Order,
         as: "orders",
       },
+      {
+        model: Contact,
+        as: "contacts"
+      },
+      {
+        model: Action,
+        as: "actions"
+      }
     ],
   });
 

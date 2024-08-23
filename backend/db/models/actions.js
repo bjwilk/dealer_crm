@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      details: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
       reminder: {
         type: DataTypes.DATEONLY,
         allowNull: true,
