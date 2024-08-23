@@ -193,7 +193,6 @@ const accountReducer = (state = initialState, action) => {
     case ACCOUNT_PROFILE: {
       const newState = { ...state };
       newState[action.payload.id] = action.payload
-      console.log(newState)
       return newState
     }
     case ACCOUNT_ORDERS: {
