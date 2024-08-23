@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Profile from "../Profile/Profile";
 
 const UpdateAccount = () => {
-    const { id } = useParams();
-    const acctId = parseInt(id)
+  const { id } = useParams();
+  const acctId = parseInt(id);
   const user = useSelector((state) => state.session.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,22 +24,22 @@ const UpdateAccount = () => {
     zipCode: 0,
   });
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
-console.log(addressInfo.equipmentType)
 
   useEffect(() => {
     if (user) {
-      dispatch(fetchAccountProfile(acctId)).then((response) => {
-        if (response) {
-          setAddressInfo(response);
-        }
-      }).catch((error) => {
-        console.error("Failed to fetch account profile:", error);
-      });
+      dispatch(fetchAccountProfile(acctId))
+        .then((response) => {
+          if (response) {
+            setAddressInfo(response);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch account profile:", error);
+        });
     }
   }, [dispatch, acctId, user]);
-
 
   const handleChange = (e) => {
     console.log(addressInfo, e.target.name);
@@ -53,40 +53,44 @@ console.log(addressInfo.equipmentType)
       case "companyName":
         setAddressInfo((pre) => ({ ...pre, companyName: e.target.value }));
         break;
-        case "equipmentType": {
-            const { value, checked } = e.target;
-          
-            setAddressInfo((prev) => {
-              // Ensure equipmentType is an array
-              const currentEquipmentType = Array.isArray(prev.equipmentType) ? prev.equipmentType : [];
-          
-              if (checked) {
-                // Add the value to the array if it's not already present
-                return {
-                  ...prev,
-                  equipmentType: currentEquipmentType.includes(value)
-                    ? currentEquipmentType // No change if value is already present
-                    : [...currentEquipmentType, value], // Add value if not present
-                };
-              } else {
-                // Remove the value from the array if it's present
-                return {
-                  ...prev,
-                  equipmentType: currentEquipmentType.filter((item) => item !== value),
-                };
-              }
-            });
-            break;
+      case "equipmentType": {
+        const { value, checked } = e.target;
+
+        setAddressInfo((prev) => {
+          // Ensure equipmentType is an array
+          const currentEquipmentType = Array.isArray(prev.equipmentType)
+            ? prev.equipmentType
+            : [];
+
+          if (checked) {
+            // Add the value to the array if it's not already present
+            return {
+              ...prev,
+              equipmentType: currentEquipmentType.includes(value)
+                ? currentEquipmentType // No change if value is already present
+                : [...currentEquipmentType, value], // Add value if not present
+            };
+          } else {
+            // Remove the value from the array if it's present
+            return {
+              ...prev,
+              equipmentType: currentEquipmentType.filter(
+                (item) => item !== value
+              ),
+            };
           }
-                case "email":
+        });
+        break;
+      }
+      case "email":
         setAddressInfo((pre) => ({ ...pre, email: e.target.value }));
         break;
       case "businessType":
         setAddressInfo((pre) => ({ ...pre, businessType: e.target.value }));
         break;
-      case "lookingFor":
-        setAddressInfo((pre) => ({ ...pre, lookingFor: e.target.value }));
-        break;
+        case "lookingFor":
+          setAddressInfo((pre) => ({ ...pre, lookingFor: e.target.value }));
+          break;
       case "fleetSize":
         setAddressInfo((pre) => ({ ...pre, fleetSize: e.target.value }));
         break;
@@ -112,7 +116,7 @@ console.log(addressInfo.equipmentType)
         break;
     }
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const processedEquipmentType = addressInfo.equipmentType.toString();
@@ -123,11 +127,10 @@ console.log(addressInfo.equipmentType)
       equipmentType: processedEquipmentType, // Ensure this is a string
     };
 
-    console.log(payload);
     let newAccount;
     try {
       const newAccount = await dispatch(fetchUpdateAccount(payload));
-      navigate(`/account/${newAccount.id}`);
+      navigate(`/account/${acctId}`);
     } catch (err) {
       if (err.response) {
         // If the error is an HTTP response
@@ -141,7 +144,6 @@ console.log(addressInfo.equipmentType)
       }
     }
   };
-
 
   return (
     <>
@@ -165,4 +167,4 @@ console.log(addressInfo.equipmentType)
   );
 };
 
-export default UpdateAccount
+export default UpdateAccount;
