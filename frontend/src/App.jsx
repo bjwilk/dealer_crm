@@ -13,6 +13,7 @@ import AccountProfile from "./components/AccountProfile/AccountProfile";
 import SalesOrderForm from "./components/SalesOrderForm/SalesOrderForm";
 import SalesOrder from "./components/SalesOrder/SalesOrder";
 import UpdateAccount from "./components/UpdateAccount/UpdateAccount";
+import CreateContact from "./components/CreateContact/CreateContact";
 
 function Layout() {
   const dispatch = useDispatch();
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
         path: "/sales-order/:orderId",
         element: <SalesOrder />
       },
+      {
+        path: "/account/:id/contact",
+        element: <CreateContact />
+      }
     ],
   },
 ]);

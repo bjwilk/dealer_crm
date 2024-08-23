@@ -70,7 +70,6 @@ router.get("/orders/:id", async (req, res, next) => {
 
 // Create Account Oder
 router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
-  console.log("In Orders Route!!")
   const { id } = req.params;
   const { vin, model, year, price, tax, license, bodies, extras, notes, condition } =
     req.body;
@@ -123,6 +122,49 @@ router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// Create Account Contact
+router.post("/company/:id/contacts", requireAuth, async (req, res, next) => {
+  const { id } = req.params;
+  const { name, position, phone, email } =
+    req.body;
+  try {
+    const account = await Account.findByPk(id);
+    if (!account) {
+      return "No account found", res;
+    }
+
+    if (account.ownerId !== req.user.id) {
+      return res.status(401).json({
+        message: "Account does not belong to user",
+      });
+    }
+
+    const newContact = await account.createContact({
+      accountId: id,
+      name,
+      position,
+      phone,
+      email,
+    });
+
+    const formattedResponse = {
+      id: newContact.id,
+      accountId: newContact.accountId,
+      name: newContact.name,
+      position: newContact.position,
+      phone: newContact.phone,
+      email: newContact.email,
+      createdAt: newContact.createdAt,
+      updatedAt: newContact.updatedAt,
+    };
+
+    return res.json(formattedResponse);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+})
 
 // Update Account
 router.put("/:accountId", requireAuth, async (req, res, next) => {
