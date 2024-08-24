@@ -323,7 +323,7 @@ router.get("/equipmentType/:equipment", requireAuth, async (req, res, next) => {
       },
       include: {
         model: Order,
-        as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+        as: "orders", 
       },
     });
 
@@ -339,11 +339,13 @@ router.get("/companyName/:companyName", requireAuth, async (req, res) => {
   Account.findAll({
     where: {
       ownerId: req.user.id,
-      companyName: companyName,
+      companyName: {
+        [Op.substring]: companyName,
+      },
     },
     include: {
       model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+      as: "orders", 
     },
   })
     .then((companyName) => {
@@ -366,7 +368,7 @@ router.get("/lookingFor/:equipment", requireAuth, async (req, res, next) => {
     },
     include: {
       model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+      as: "orders", 
     },
   })
     .then((equipment) => {
