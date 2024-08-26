@@ -249,6 +249,25 @@ router.delete("/company/:accountId", requireAuth, async (req, res, next) => {
   });
 });
 
+// Delete Action
+router.delete("/action/:actionId", requireAuth, async (req, res, next) => {
+  const actionId = req.params.actionId;
+  const destroyAction = await Action.findByPk(actionId);
+
+  if (!destroyAction) {
+    return res.status(404).json({
+      message: "Action not found",
+    });
+  }
+
+  await destroyAction.destroy();
+
+  return res.json({
+    message: "Action deleted successfully",
+  });
+});
+
+
 
 // Get all Accounts for current user
 router.get("/current", requireAuth, async (req, res, next) => {

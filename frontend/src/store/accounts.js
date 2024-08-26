@@ -9,6 +9,12 @@ const ACCOUNT_ORDERS = "accounts/accountOrders";
 const UPDATE_ACCOUNT = "accounts/updateAccount";
 const CREATE_CONTACT = "accounts/createContact";
 const CREATE_ACTION = "accounts/createAction";
+const DELETE_ACTION = "accounts/deleteAction";
+
+const deleteAction = (actionId) => ({
+  type: DELETE_ACTION,
+  actionId
+})
 
 const createAction = (payload) => ({
   type: CREATE_ACTION,
@@ -56,6 +62,15 @@ const createAccount = (payload) => ({
   payload
 });
 
+//* Delete a action by id
+export const fetchDeleteAction = (actionId) => async (dispatch) =>{
+  const res = await csrfFetch(`/api/accounts/action/${actionId}`, {
+      method: "DELETE"
+  })
+  dispatch(deleteAction(actionId))
+  return res
+}
+
 export const fetchAccountOrders = (id) => async (dispatch) => {
   try {
     const res = await csrfFetch(`/api/orders/${id}`);
@@ -68,7 +83,6 @@ export const fetchAccountOrders = (id) => async (dispatch) => {
     console.error("Error loading accounts", err);
   }
 };
-
 
 export const fetchAccountProfile = (id) => async (dispatch) => {
   try {
@@ -130,10 +144,10 @@ export const fetchCreateAction = (accountId, action) => async (dispatch) => {
     if (res.ok) {
       const newAction = await res.json();
       console.log({newAction})
-      dispatch(createContact(newAction));
+      dispatch(createAction(newAction));
       return newAction;
     }  } catch (err){
-    console.error("Error creating contact", err);
+    console.error("Error creating action", err);
   }
 }
 
@@ -306,6 +320,11 @@ const accountReducer = (state = initialState, action) => {
     const newAction = action.payload;
     newState[newAction.id] = newAction;
     return newState;
+  }
+  case DELETE_ACTION: {
+    const newState = { ...state };
+    delete newState[action.actionId];
+    return newState
   }
 
     default:
