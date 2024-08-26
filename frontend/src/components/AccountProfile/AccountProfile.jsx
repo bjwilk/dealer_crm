@@ -67,7 +67,7 @@ export default function AccountProfile() {
       <div className="account-filter">
         <div className="dashboard__accounts">
           <h4>Actions</h4>
-          <NavLink>
+          <NavLink to={`/account/${acctId}/action`}>
             <button className="btn btn-primary btn-sm btn-icon-text">Add Action</button>
           </NavLink>
           {usersActions.length > 0 ? (
@@ -123,7 +123,9 @@ export default function AccountProfile() {
             <p>Fleet Size: {profile.fleetSize}</p>
             <p>Looking For: {profile.lookingFor}</p>
             <p>Phone #: {profile.phoneNumber}</p>
-            <p>City: {profile.city}</p>
+            <p>Email: {profile.email}</p>
+            <span>{profile.address}</span><br></br>
+            <span>{profile.city}, {profile.zipCode}</span>
           </>
         ) : (
           <div>Must be logged in</div>

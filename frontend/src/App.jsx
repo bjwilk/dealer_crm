@@ -14,6 +14,7 @@ import SalesOrderForm from "./components/SalesOrderForm/SalesOrderForm";
 import SalesOrder from "./components/SalesOrder/SalesOrder";
 import UpdateAccount from "./components/UpdateAccount/UpdateAccount";
 import CreateContact from "./components/CreateContact/CreateContact";
+import CreateAction from "./components/CreateAction/CreateAction";
 
 function Layout() {
   const dispatch = useDispatch();
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
       {
         path: "/account/:id/contact",
         element: <CreateContact />
+      },
+      {
+        path: "/account/:id/action",
+        element: <CreateAction />
       }
     ],
   },

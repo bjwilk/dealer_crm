@@ -123,6 +123,47 @@ router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
   }
 });
 
+// Create Account Action
+router.post("/company/:id/actions", requireAuth, async (req, res, next) => {
+  const { id } = req.params;
+  const { report, details, reminder } =
+    req.body;
+  try {
+    const account = await Account.findByPk(id);
+    if (!account) {
+      return "No account found", res;
+    }
+
+    if (account.ownerId !== req.user.id) {
+      return res.status(401).json({
+        message: "Account does not belong to user",
+      });
+    }
+
+    const newAction = await account.createAction({
+      accountId: id,
+      report,
+      details,
+      reminder,
+    });
+
+    const formattedResponse = {
+      id: newAction.id,
+      accountId: newAction.accountId,
+      report: newAction.report,
+      details: newAction.details,
+      reminder: newAction.reminder,
+      createdAt: newAction.createdAt,
+      updatedAt: newAction.updatedAt,
+    };
+
+    return res.json(formattedResponse);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Create Account Contact
 router.post("/company/:id/contacts", requireAuth, async (req, res, next) => {
   const { id } = req.params;
@@ -208,26 +249,10 @@ router.delete("/company/:accountId", requireAuth, async (req, res, next) => {
   });
 });
 
-// Find by businessType
-router.get("/businessType/:business", async (req, res) => {
-  const { business } = req.params;
-  const company = await Account.findAll({
-    where: {
-      ownerId: req.user.id,
-      businessType: req.params.business,
-    },
-    include: {
-      model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
-    },
-  });
-  return res.json(company);
-});
 
 // Get all Accounts for current user
 router.get("/current", requireAuth, async (req, res, next) => {
   const account = await Account.findAll({
-    // attributes: ['companyName', 'ownerId', 'businessType', 'id'],
     where: {
       ownerId: req.user.id,
     },
@@ -308,6 +333,22 @@ router.post("/", async (req, res, next) => {
     .catch((err) => {
       console.log("Error adding account", err);
     });
+});
+
+// Find by businessType
+router.get("/businessType/:business", async (req, res) => {
+  const { business } = req.params;
+  const company = await Account.findAll({
+    where: {
+      ownerId: req.user.id,
+      businessType: req.params.business,
+    },
+    include: {
+      model: Order,
+      as: "orders", 
+    },
+  });
+  return res.json(company);
 });
 
 // Find by EquipmentType
