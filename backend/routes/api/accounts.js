@@ -68,6 +68,7 @@ router.get("/orders/:id", async (req, res, next) => {
   }
 });
 
+
 // Create Account Oder
 router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
   const { id } = req.params;
@@ -114,6 +115,71 @@ router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
       notes: newOrder.notes,
       createdAt: newOrder.createdAt,
       updatedAt: newOrder.updatedAt,
+    };
+
+    return res.json(formattedResponse);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Update Order
+router.put("/company/:orderId/orders", requireAuth, async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const updatedOrderData = req.body; // Ensure that req.body only contains fields you want to update
+
+  try {
+    const rowsUpdated = await Order.update(updatedOrderData, {
+      where: { id: orderId },
+    });
+
+    if (rowsUpdated[0] === 0) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
+
+    const updatedOrder = await Order.findByPk(orderId); // Fetch the updated Order separately
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error("Error updating Order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Create Account Action
+router.post("/company/:id/actions", requireAuth, async (req, res, next) => {
+  const { id } = req.params;
+  const { report, details, reminder } =
+    req.body;
+  try {
+    const account = await Account.findByPk(id);
+    if (!account) {
+      return "No account found", res;
+    }
+
+    if (account.ownerId !== req.user.id) {
+      return res.status(401).json({
+        message: "Account does not belong to user",
+      });
+    }
+
+    const newAction = await account.createAction({
+      accountId: id,
+      report,
+      details,
+      reminder,
+    });
+
+    const formattedResponse = {
+      id: newAction.id,
+      accountId: newAction.accountId,
+      report: newAction.report,
+      details: newAction.details,
+      reminder: newAction.reminder,
+      createdAt: newAction.createdAt,
+      updatedAt: newAction.updatedAt,
     };
 
     return res.json(formattedResponse);
@@ -208,26 +274,63 @@ router.delete("/company/:accountId", requireAuth, async (req, res, next) => {
   });
 });
 
-// Find by businessType
-router.get("/businessType/:business", async (req, res) => {
-  const { business } = req.params;
-  const company = await Account.findAll({
-    where: {
-      ownerId: req.user.id,
-      businessType: req.params.business,
-    },
-    include: {
-      model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
-    },
+// Delete Action
+router.delete("/actions/:actionId", requireAuth, async (req, res, next) => {
+  const actionId = req.params.actionId;
+  const destroyAction = await Action.findByPk(actionId);
+
+  if (!destroyAction) {
+    return res.status(404).json({
+      message: "Action not found",
+    });
+  }
+
+  await destroyAction.destroy();
+
+  return res.json({
+    message: "Action deleted successfully",
   });
-  return res.json(company);
+});
+
+// Delete Contact
+router.delete("/contacts/:contactId", requireAuth, async (req, res, next) => {
+  const contactId = req.params.contactId;
+  const destroyContact = await Contact.findByPk(contactId);
+
+  if (!destroyContact) {
+    return res.status(404).json({
+      message: "Contact not found",
+    });
+  }
+
+  await destroyContact.destroy();
+
+  return res.json({
+    message: "Contact deleted successfully",
+  });
+});
+
+// Delete Order
+router.delete("/orders/:orderId", requireAuth, async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const destroyOrder = await Order.findByPk(orderId);
+
+  if (!destroyOrder) {
+    return res.status(404).json({
+      message: "Order not found",
+    });
+  }
+
+  await destroyOrder.destroy();
+
+  return res.json({
+    message: "Order deleted successfully",
+  });
 });
 
 // Get all Accounts for current user
 router.get("/current", requireAuth, async (req, res, next) => {
   const account = await Account.findAll({
-    // attributes: ['companyName', 'ownerId', 'businessType', 'id'],
     where: {
       ownerId: req.user.id,
     },
@@ -308,6 +411,22 @@ router.post("/", async (req, res, next) => {
     .catch((err) => {
       console.log("Error adding account", err);
     });
+});
+
+// Find by businessType
+router.get("/businessType/:business", async (req, res) => {
+  const { business } = req.params;
+  const company = await Account.findAll({
+    where: {
+      ownerId: req.user.id,
+      businessType: req.params.business,
+    },
+    include: {
+      model: Order,
+      as: "orders", 
+    },
+  });
+  return res.json(company);
 });
 
 // Find by EquipmentType

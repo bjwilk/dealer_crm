@@ -29,6 +29,7 @@ $padding: 16px;
 
     button {
       margin-bottom: $padding;
+      margin: 3px;
     }
 
     p {
@@ -70,6 +71,51 @@ $padding: 16px;
 
     button {
       margin-bottom: $padding;
+      margin: 3px;
+    }
+  }
+
+  &__contacts {
+    flex: 3;
+    background-color: #fff;
+    padding: $padding;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-left: $padding;
+    
+    h2 {
+      margin-bottom: 8px;
+      color: $primary-color;
+    }
+
+    p {
+      margin: 8px;
+    }
+
+    button {
+      margin-bottom: $padding;
+      margin: 3px;
+    }
+  }
+
+  &__actions {
+    flex: 3;
+    background-color: #fff;
+    padding: $padding;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-left: $padding;
+    
+    h2 {
+      margin-bottom: 8px;
+      color: $primary-color;
+    }
+
+    p {
+      margin: 8px;
+    }
+
+    button {
+      margin-bottom: $padding;
+      margin: 3px;
     }
   }
 }

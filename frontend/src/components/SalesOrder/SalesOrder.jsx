@@ -28,7 +28,7 @@ export default function SalesOrder() {
   const dispatch = useDispatch();
   const [orderData, setOrderData] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Loading state
-
+console.log(orderData)
   const id = parseInt(orderId)
 
   const user = useSelector((state) => state.session?.user);
