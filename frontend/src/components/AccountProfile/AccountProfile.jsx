@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams, Link, NavLink } from "react-router-dom";
 // import Profile from "../Profile/Profile";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAccountProfile, fetchDeleteAction } from "../../store/accounts";
+import {
+  fetchAccountProfile,
+  fetchDeleteAction,
+  fetchDeleteContact,
+} from "../../store/accounts";
+import { fetchDeleteOrder } from "../../store/orders"
 import "./AccountProfile.scss";
 
 export default function AccountProfile() {
@@ -40,10 +45,27 @@ export default function AccountProfile() {
     accountContacts = profile.contacts.flatMap((contact) => contact);
   }
 
+  //  Optimistic UI Update: After the deletion request, the local profile state is immediately updated to remove the deleted action, without waiting for a full refetch.
+  //  This method does not require refetching the entire profile or actions list, making the UI more efficient and responsive.
+  const handleRemoveContact = async (e, contactId) => {
+    e.preventDefault();
+    try {
+      await dispatch(fetchDeleteContact(contactId));
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        contacts: prevProfile.actions.filter(
+          (contact) => contact.id !== contactId
+        ),
+      }));
+    } catch (err) {
+      console.error("Failed to delete contact:", err);
+    }
+  };
+
   function Contacts() {
     return (
       <div className="account-filter">
-        <div className="dashboard__accounts">
+        <div className="dashboard__contacts">
           <h4>Contacts</h4>
           <NavLink to={`/account/${acctId}/contact`}>
             <button className="btn btn-primary btn-sm btn-icon-text">
@@ -56,6 +78,10 @@ export default function AccountProfile() {
                 <p>{contact.name}</p>
                 <p>{contact.position}</p>
                 <p>{contact.phone}</p>
+                <button>Update</button>
+                <button onClick={(e) => handleRemoveContact(e, contact.id)}>
+                  Remove Contact
+                </button>
               </div>
             ))
           ) : (
@@ -84,7 +110,7 @@ export default function AccountProfile() {
   function Actions() {
     return (
       <div className="account-filter">
-        <div className="dashboard__accounts">
+        <div className="dashboard__actions">
           <h4>Actions</h4>
           <NavLink to={`/account/${acctId}/action`}>
             <button className="btn btn-primary btn-sm btn-icon-text">
@@ -110,6 +136,23 @@ export default function AccountProfile() {
     );
   }
 
+    //  Optimistic UI Update: After the deletion request, the local profile state is immediately updated to remove the deleted action, without waiting for a full refetch.
+  //  This method does not require refetching the entire profile or actions list, making the UI more efficient and responsive.
+  const handleRemoveOrder = async (e, orderId) => {
+    e.preventDefault();
+    try {
+      await dispatch(fetchDeleteOrder(orderId));
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        orders: prevProfile.orders.filter(
+          (order) => order.id !== orderId
+        ),
+      }));
+    } catch (err) {
+      console.error("Failed to delete order:", err);
+    }
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard__quotes">
@@ -125,10 +168,10 @@ export default function AccountProfile() {
               <NavLink to={`/sales-order/${order.id}`}>
                 <p>VIN: {order.vin}</p>
               </NavLink>
-              <NavLink>
+              <NavLink to={`/account/${acctId}/update-order/${order.id}`}>
                 <button>Update</button>
               </NavLink>
-              <button>Delete</button>
+              <button onClick={(e) => handleRemoveOrder(e, order.id)}>Delete</button>
             </div>
           ))
         ) : (
@@ -160,6 +203,15 @@ export default function AccountProfile() {
         ) : (
           <div>Must be logged in</div>
         )}
+      </div>
+      <div>
+        <div className="filter-cards">
+          {Object.values(profile).length > 0 ? (
+            <Actions />
+          ) : (
+            <p>Loading actions...</p>
+          )}
+        </div>
         <div className="filter-cards">
           {Object.values(profile).length > 0 ? (
             <Contacts />
@@ -167,13 +219,6 @@ export default function AccountProfile() {
             <p>Loading actions...</p>
           )}
         </div>
-      </div>
-      <div className="filter-cards">
-        {Object.values(profile).length > 0 ? (
-          <Actions />
-        ) : (
-          <p>Loading actions...</p>
-        )}
       </div>
     </div>
   );

@@ -10,6 +10,12 @@ const UPDATE_ACCOUNT = "accounts/updateAccount";
 const CREATE_CONTACT = "accounts/createContact";
 const CREATE_ACTION = "accounts/createAction";
 const DELETE_ACTION = "accounts/deleteAction";
+const DELETE_CONTACT = "accounts/deleteContact";
+
+const deleteContact = (contactId) => ({
+  type: DELETE_CONTACT,
+  contactId
+})
 
 const deleteAction = (actionId) => ({
   type: DELETE_ACTION,
@@ -62,9 +68,18 @@ const createAccount = (payload) => ({
   payload
 });
 
+//* Delete a contact by id
+export const fetchDeleteContact = (contactId) => async (dispatch) =>{
+  const res = await csrfFetch(`/api/accounts/contacts/${contactId}`, {
+      method: "DELETE"
+  })
+  dispatch(deleteContact(contactId))
+  return res
+}
+
 //* Delete a action by id
 export const fetchDeleteAction = (actionId) => async (dispatch) =>{
-  const res = await csrfFetch(`/api/accounts/action/${actionId}`, {
+  const res = await csrfFetch(`/api/accounts/actions/${actionId}`, {
       method: "DELETE"
   })
   dispatch(deleteAction(actionId))
@@ -324,7 +339,12 @@ const accountReducer = (state = initialState, action) => {
   case DELETE_ACTION: {
     const newState = { ...state };
     delete newState[action.actionId];
-    return newState
+    return newState;
+  }
+  case DELETE_CONTACT: {
+    const newState = { ...state };
+    delete newState[action.contactId];
+    return newState;
   }
 
     default:
