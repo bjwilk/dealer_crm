@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 
 const { setTokenCookie, requireAuth } = require("../../utils/auth");
-const { Account, User, Order } = require("../../db/models");
+const { Account, User, Order, Contact, Action } = require("../../db/models");
 
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
@@ -24,6 +24,14 @@ router.get("/company/:accountId", async (req, res, next) => {
           model: Order,
           as: "orders",
         },
+        {
+          model: Action,
+          as: "actions"
+        },
+        {
+          model: Contact,
+          as: "contacts"
+        }
       ],
     });
     if (!account) {
@@ -45,7 +53,7 @@ router.get("/orders/:id", async (req, res, next) => {
     const order = await Order.findByPk(req.params.id, {
       include: {
         model: Account,
-        as: "account", // Assuming you've defined 'account' as the alias in your Order model association
+        as: "account", 
       },
     });
     if (!order) {
@@ -60,9 +68,9 @@ router.get("/orders/:id", async (req, res, next) => {
   }
 });
 
+
 // Create Account Oder
 router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
-  console.log("In Orders Route!!")
   const { id } = req.params;
   const { vin, model, year, price, tax, license, bodies, extras, notes, condition } =
     req.body;
@@ -116,8 +124,116 @@ router.post("/company/:id/orders", requireAuth, async (req, res, next) => {
   }
 });
 
+// Update Order
+router.put("/company/:orderId/orders", requireAuth, async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const updatedOrderData = req.body; // Ensure that req.body only contains fields you want to update
+
+  try {
+    const rowsUpdated = await Order.update(updatedOrderData, {
+      where: { id: orderId },
+    });
+
+    if (rowsUpdated[0] === 0) {
+      res.status(404).json({ error: "Order not found" });
+      return;
+    }
+
+    const updatedOrder = await Order.findByPk(orderId); // Fetch the updated Order separately
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error("Error updating Order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Create Account Action
+router.post("/company/:id/actions", requireAuth, async (req, res, next) => {
+  const { id } = req.params;
+  const { report, details, reminder } =
+    req.body;
+  try {
+    const account = await Account.findByPk(id);
+    if (!account) {
+      return "No account found", res;
+    }
+
+    if (account.ownerId !== req.user.id) {
+      return res.status(401).json({
+        message: "Account does not belong to user",
+      });
+    }
+
+    const newAction = await account.createAction({
+      accountId: id,
+      report,
+      details,
+      reminder,
+    });
+
+    const formattedResponse = {
+      id: newAction.id,
+      accountId: newAction.accountId,
+      report: newAction.report,
+      details: newAction.details,
+      reminder: newAction.reminder,
+      createdAt: newAction.createdAt,
+      updatedAt: newAction.updatedAt,
+    };
+
+    return res.json(formattedResponse);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Create Account Contact
+router.post("/company/:id/contacts", requireAuth, async (req, res, next) => {
+  const { id } = req.params;
+  const { name, position, phone, email } =
+    req.body;
+  try {
+    const account = await Account.findByPk(id);
+    if (!account) {
+      return "No account found", res;
+    }
+
+    if (account.ownerId !== req.user.id) {
+      return res.status(401).json({
+        message: "Account does not belong to user",
+      });
+    }
+
+    const newContact = await account.createContact({
+      accountId: id,
+      name,
+      position,
+      phone,
+      email,
+    });
+
+    const formattedResponse = {
+      id: newContact.id,
+      accountId: newContact.accountId,
+      name: newContact.name,
+      position: newContact.position,
+      phone: newContact.phone,
+      email: newContact.email,
+      createdAt: newContact.createdAt,
+      updatedAt: newContact.updatedAt,
+    };
+
+    return res.json(formattedResponse);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+})
+
 // Update Account
-router.put("/company/:accountId", requireAuth, async (req, res, next) => {
+router.put("/:accountId", requireAuth, async (req, res, next) => {
   const accountId = req.params.accountId;
   const updatedAccountData = req.body; // Ensure that req.body only contains fields you want to update
 
@@ -158,26 +274,63 @@ router.delete("/company/:accountId", requireAuth, async (req, res, next) => {
   });
 });
 
-// Find by businessType
-router.get("/businessType/:business", async (req, res) => {
-  const { business } = req.params;
-  const company = await Account.findAll({
-    where: {
-      ownerId: req.user.id,
-      businessType: req.params.business,
-    },
-    include: {
-      model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
-    },
+// Delete Action
+router.delete("/actions/:actionId", requireAuth, async (req, res, next) => {
+  const actionId = req.params.actionId;
+  const destroyAction = await Action.findByPk(actionId);
+
+  if (!destroyAction) {
+    return res.status(404).json({
+      message: "Action not found",
+    });
+  }
+
+  await destroyAction.destroy();
+
+  return res.json({
+    message: "Action deleted successfully",
   });
-  return res.json(company);
+});
+
+// Delete Contact
+router.delete("/contacts/:contactId", requireAuth, async (req, res, next) => {
+  const contactId = req.params.contactId;
+  const destroyContact = await Contact.findByPk(contactId);
+
+  if (!destroyContact) {
+    return res.status(404).json({
+      message: "Contact not found",
+    });
+  }
+
+  await destroyContact.destroy();
+
+  return res.json({
+    message: "Contact deleted successfully",
+  });
+});
+
+// Delete Order
+router.delete("/orders/:orderId", requireAuth, async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const destroyOrder = await Order.findByPk(orderId);
+
+  if (!destroyOrder) {
+    return res.status(404).json({
+      message: "Order not found",
+    });
+  }
+
+  await destroyOrder.destroy();
+
+  return res.json({
+    message: "Order deleted successfully",
+  });
 });
 
 // Get all Accounts for current user
 router.get("/current", requireAuth, async (req, res, next) => {
   const account = await Account.findAll({
-    // attributes: ['companyName', 'ownerId', 'businessType', 'id'],
     where: {
       ownerId: req.user.id,
     },
@@ -191,6 +344,14 @@ router.get("/current", requireAuth, async (req, res, next) => {
         model: Order,
         as: "orders",
       },
+      {
+        model: Contact,
+        as: "contacts"
+      },
+      {
+        model: Action,
+        as: "actions"
+      }
     ],
   });
 
@@ -252,6 +413,22 @@ router.post("/", async (req, res, next) => {
     });
 });
 
+// Find by businessType
+router.get("/businessType/:business", async (req, res) => {
+  const { business } = req.params;
+  const company = await Account.findAll({
+    where: {
+      ownerId: req.user.id,
+      businessType: req.params.business,
+    },
+    include: {
+      model: Order,
+      as: "orders", 
+    },
+  });
+  return res.json(company);
+});
+
 // Find by EquipmentType
 router.get("/equipmentType/:equipment", requireAuth, async (req, res, next) => {
   const { equipment } = req.params;
@@ -265,7 +442,7 @@ router.get("/equipmentType/:equipment", requireAuth, async (req, res, next) => {
       },
       include: {
         model: Order,
-        as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+        as: "orders", 
       },
     });
 
@@ -281,11 +458,13 @@ router.get("/companyName/:companyName", requireAuth, async (req, res) => {
   Account.findAll({
     where: {
       ownerId: req.user.id,
-      companyName: companyName,
+      companyName: {
+        [Op.substring]: companyName,
+      },
     },
     include: {
       model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+      as: "orders", 
     },
   })
     .then((companyName) => {
@@ -308,7 +487,7 @@ router.get("/lookingFor/:equipment", requireAuth, async (req, res, next) => {
     },
     include: {
       model: Order,
-      as: "orders", // Assuming you've defined 'account' as the alias in your Order model association
+      as: "orders", 
     },
   })
     .then((equipment) => {

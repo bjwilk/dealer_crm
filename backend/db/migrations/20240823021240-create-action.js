@@ -1,5 +1,7 @@
 "use strict";
 
+const { all } = require("../../routes/api/accounts");
+
 let options = {};
 // if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA;
@@ -22,6 +24,10 @@ module.exports = {
         allowNull: false,
       },
       report: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      details: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

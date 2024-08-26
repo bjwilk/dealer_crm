@@ -1,4 +1,3 @@
-import { act } from "react";
 import { csrfFetch } from "./csrf";
 
 const LOAD_ACCOUNTS = "accounts/loadAccounts";
@@ -7,6 +6,36 @@ const FILTER_ACCOUNTS = "accounts/filterAccounts";
 const CREATE_ACCOUNT = "accounts/createAccount"
 const ACCOUNT_PROFILE = "accounts/accountProfile"
 const ACCOUNT_ORDERS = "accounts/accountOrders";
+const UPDATE_ACCOUNT = "accounts/updateAccount";
+const CREATE_CONTACT = "accounts/createContact";
+const CREATE_ACTION = "accounts/createAction";
+const DELETE_ACTION = "accounts/deleteAction";
+const DELETE_CONTACT = "accounts/deleteContact";
+
+const deleteContact = (contactId) => ({
+  type: DELETE_CONTACT,
+  contactId
+})
+
+const deleteAction = (actionId) => ({
+  type: DELETE_ACTION,
+  actionId
+})
+
+const createAction = (payload) => ({
+  type: CREATE_ACTION,
+  payload
+})
+
+const createContact = (payload) => ({
+  type: CREATE_CONTACT,
+  payload
+})
+
+const updateAccount = (payload) => ({
+  type: UPDATE_ACCOUNT,
+  payload
+})
 
 const accountOrders = (orders) => ({
   type: ACCOUNT_ORDERS,
@@ -14,9 +43,9 @@ const accountOrders = (orders) => ({
 });
 
 
-const accountProfile = (id) => ({
+const accountProfile = (payload) => ({
   type: ACCOUNT_PROFILE,
-  payload: account
+  payload
 })
 
 const loadAccounts = (payload) => ({
@@ -39,6 +68,24 @@ const createAccount = (payload) => ({
   payload
 });
 
+//* Delete a contact by id
+export const fetchDeleteContact = (contactId) => async (dispatch) =>{
+  const res = await csrfFetch(`/api/accounts/contacts/${contactId}`, {
+      method: "DELETE"
+  })
+  dispatch(deleteContact(contactId))
+  return res
+}
+
+//* Delete a action by id
+export const fetchDeleteAction = (actionId) => async (dispatch) =>{
+  const res = await csrfFetch(`/api/accounts/actions/${actionId}`, {
+      method: "DELETE"
+  })
+  dispatch(deleteAction(actionId))
+  return res
+}
+
 export const fetchAccountOrders = (id) => async (dispatch) => {
   try {
     const res = await csrfFetch(`/api/orders/${id}`);
@@ -52,19 +99,73 @@ export const fetchAccountOrders = (id) => async (dispatch) => {
   }
 };
 
-
 export const fetchAccountProfile = (id) => async (dispatch) => {
-  console.log(parseInt(id))
-  try{
-    const res = await csrfFetch(`api/accounts/company/${id}`);
-    if(res.ok){
+  try {
+    const res = await csrfFetch(`/api/accounts/company/${id}`);
+    if (res.ok) {
+      // console.log("Response OK:", res);
+      
+      // // Check headers and status
+      // console.log("Headers:", res.headers);
+      // console.log("Status:", res.status);
+
+      // Parse the JSON data
       const data = await res.json();
-      dispatch(accountProfile(data))
+      
+      // Log the data to see what's being returned
+      // console.log("Parsed Data:", data);
+      
+      // Dispatch the action with the data
+      dispatch(accountProfile(data));
+      return data;
+    } else {
+      console.error("Response not OK:", res.status, res.statusText);
     }
-  }catch (err){
-    console.error("Error fetching Account Profile", err)
+  } catch (err) {
+    console.error("Error fetching Account Profile:", err);
+  }
+};
+
+export const fetchCreateContact = (accountId, contact) => async (dispatch) => {
+  try{
+    const res = await csrfFetch(`/api/accounts/company/${accountId}/contacts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(contact),
+    });
+
+    if (res.ok) {
+      const newContact = await res.json();
+      console.log({newContact})
+      dispatch(createContact(newContact));
+      return newContact;
+    }  } catch (err){
+    console.error("Error creating contact", err);
   }
 }
+
+export const fetchCreateAction = (accountId, action) => async (dispatch) => {
+  try{
+    const res = await csrfFetch(`/api/accounts/company/${accountId}/actions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+
+    if (res.ok) {
+      const newAction = await res.json();
+      console.log({newAction})
+      dispatch(createAction(newAction));
+      return newAction;
+    }  } catch (err){
+    console.error("Error creating action", err);
+  }
+}
+
 
 export const createNewAccount = (account) => async (dispatch) => { 
   try {
@@ -81,6 +182,31 @@ export const createNewAccount = (account) => async (dispatch) => {
           dispatch(createAccount(newAccount));
           return newAccount
       }
+  } catch (err) {
+      console.error("Error creating spot", err);
+  }
+}
+
+export const fetchUpdateAccount = (account) => async (dispatch) => { 
+  try {
+      const res = await csrfFetch(`/api/accounts/${account.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(account),
+    });
+
+
+    if (res.ok) {
+        const data = await res.json();
+
+      console.log('Data',data)
+
+        dispatch(updateAccount(account.id, data));
+    } else {
+        console.error("Failed to load album");
+    }
   } catch (err) {
       console.error("Error creating spot", err);
   }
@@ -178,7 +304,6 @@ const accountReducer = (state = initialState, action) => {
     }
     case ACCOUNT_PROFILE: {
       const newState = { ...state };
-      console.log("Action", action.payload)
       newState[action.payload.id] = action.payload
       return newState
     }
@@ -192,6 +317,36 @@ const accountReducer = (state = initialState, action) => {
         },
       };
     }
+    case UPDATE_ACCOUNT: {
+      console.log(action.payload)
+      return {
+          ...state,
+           accounts: action.payload
+      };
+  }
+  case CREATE_CONTACT: {
+    const newState = { ...state }
+    const newContact = action.payload;
+    newState[newContact.id] = newContact;
+    return newState;
+  }
+  case CREATE_ACTION: {
+    const newState = { ...state }
+    const newAction = action.payload;
+    newState[newAction.id] = newAction;
+    return newState;
+  }
+  case DELETE_ACTION: {
+    const newState = { ...state };
+    delete newState[action.actionId];
+    return newState;
+  }
+  case DELETE_CONTACT: {
+    const newState = { ...state };
+    delete newState[action.contactId];
+    return newState;
+  }
+
     default:
       return state;
   }

@@ -14,6 +14,16 @@ module.exports = (sequelize, DataTypes) => {
       Account.hasMany(models.Order, {
         foreignKey: 'accountId',
         as: 'orders'
+      });
+
+      Account.hasMany(models.Contact, {
+        foreignKey: 'accountId',
+        as: 'contacts'
+      });
+
+      Account.hasMany(models.Action, {
+        foreignKey: 'accountId',
+        as: 'actions'
       })
     }
   }

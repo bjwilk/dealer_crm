@@ -128,34 +128,6 @@ const CreateAccount = () => {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log(addressInfo, "in here HS dashboard ");
-  //   const newaccount = {...addressInfo}
-  //   console.log('New Account', newaccount)
-  //   let avalue = newaccount.equipmentType;
-  //   newaccount.equipmentType = JSON.stringify(avalue)
-  //   console.log('New Account Equipment', newaccount.equipmentType)
-  //   fetch("http://localhost:3002/accounts", {
-  //     method: "Post",
-  //     headers: {
-  //       "content-type": "application/json",
-  //       Authorization: `Bearer ${localStorage.getItem("jsonwebtoken")}`,
-  //     },
-  //     body: JSON.stringify(newaccount),
-  //   })
-  //     .then((response) => {
-  //       return response.json();
-  //     })
-  //     .then((results) => {
-  //       showToast(true);
-
-  //       console.log(results);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
 
   return (
     <>
