@@ -69,9 +69,9 @@ export default function DashBoard() {
                 <div key={action.id}>
                   <NavLink to={`/account/${action.accountId}`}>
                     <p>
-                      Action: {action.report}
+                      <strong>Action:</strong> {action.report}
                       <br></br>
-                      <span>Due by: {action.reminder}</span>
+                      <span> <strong>Due by:</strong> {action.reminder}</span>
                     </p>
                   </NavLink>
                 </div>
@@ -82,15 +82,15 @@ export default function DashBoard() {
           ) : monthActions.length > 0 ? (
             monthActions.map((action) => (
               <div key={action.id}>
-                <NavLink to={`/account/${action.accountId}`}>
-                  <p>
-                    Action: {action.report}
-                    <br></br>
-                    <span>Due by: {action.reminder}</span>
-                  </p>
-                </NavLink>
-              </div>
-            ))
+              <NavLink to={`/account/${action.accountId}`}>
+                <p>
+                  <strong>Action:</strong> {action.report}
+                  <br></br>
+                  <span> <strong>Due by:</strong> {action.reminder}</span>
+                </p>
+              </NavLink>
+            </div>
+        ))
           ) : (
             <p>No actions available within the next month.</p>
           )}
