@@ -148,13 +148,17 @@ export default function AccountProfile() {
             weekActions.length > 0 ? (
               weekActions.map((action) => (
                 <div key={action.id}>
-                  <NavLink to={`/account/${action.accountId}`}>
-                    <p>
-                      Action: {action.report}
-                      <br></br>
-                      <span>Due by: {action.reminder}</span>
-                    </p>
-                  </NavLink>
+                  <p>
+                    <strong>Action:</strong> {action.report}
+                  </p>
+                  <br></br>
+                  <p>
+                    <strong>Details:</strong> {action.details}
+                  </p>
+                  <br></br>
+                  <span>
+                    <strong>Due by:</strong> {action.reminder}
+                  </span>
                   <button onClick={(e) => handleRemoveAction(e, action.id)}>
                     Remove Action
                   </button>{" "}
@@ -166,13 +170,20 @@ export default function AccountProfile() {
           ) : monthActions.length > 0 ? (
             monthActions.map((action) => (
               <div key={action.id}>
-                <NavLink to={`/account/${action.accountId}`}>
-                  <p>
-                    Action: {action.report}
-                    <br></br>
-                    <span>Due by: {action.reminder}</span>
-                  </p>
-                </NavLink>
+                <p>
+                  <strong>Action:</strong> {action.report}
+                </p>
+                <br></br>
+                <p>
+                  <strong>Details:</strong> {action.details}
+                </p>
+                <br></br>
+                <span>
+                  <strong>Due by:</strong> {action.reminder}
+                </span>
+                <button onClick={(e) => handleRemoveAction(e, action.id)}>
+                  Remove Action
+                </button>{" "}
               </div>
             ))
           ) : (
