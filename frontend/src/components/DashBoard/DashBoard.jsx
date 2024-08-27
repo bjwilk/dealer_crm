@@ -148,20 +148,13 @@ export default function AccountProfile() {
             weekActions.length > 0 ? (
               weekActions.map((action) => (
                 <div key={action.id}>
-                  <p>
-                    <strong>Action:</strong> {action.report}
-                  </p>
-                  <br></br>
-                  <p>
-                    <strong>Details:</strong> {action.details}
-                  </p>
-                  <br></br>
-                  <span>
-                    <strong>Due by:</strong> {action.reminder}
-                  </span>
-                  <button onClick={(e) => handleRemoveAction(e, action.id)}>
-                    Remove Action
-                  </button>{" "}
+                  <NavLink to={`/account/${action.accountId}`}>
+                    <p>
+                      <strong>Action:</strong> {action.report}
+                      <br></br>
+                      <span> <strong>Due by:</strong> {action.reminder}</span>
+                    </p>
+                  </NavLink>
                 </div>
               ))
             ) : (
@@ -170,22 +163,15 @@ export default function AccountProfile() {
           ) : monthActions.length > 0 ? (
             monthActions.map((action) => (
               <div key={action.id}>
+              <NavLink to={`/account/${action.accountId}`}>
                 <p>
                   <strong>Action:</strong> {action.report}
+                  <br></br>
+                  <span> <strong>Due by:</strong> {action.reminder}</span>
                 </p>
-                <br></br>
-                <p>
-                  <strong>Details:</strong> {action.details}
-                </p>
-                <br></br>
-                <span>
-                  <strong>Due by:</strong> {action.reminder}
-                </span>
-                <button onClick={(e) => handleRemoveAction(e, action.id)}>
-                  Remove Action
-                </button>{" "}
-              </div>
-            ))
+              </NavLink>
+            </div>
+        ))
           ) : (
             <p>No actions available within the next month.</p>
           )}
@@ -281,6 +267,11 @@ export default function AccountProfile() {
     </div>
   );
 }
+
+
+
+
+
 
 
 
