@@ -10,15 +10,22 @@ export default function DashBoard() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   const accounts = useSelector((state) => state.accounts);
+  const [isWeekFilter, setIsWeekFilter] = useState(true);
 
-  const usersActions = Object.values(accounts).flatMap(account => account.actions || []);
-  
+  const usersActions = Object.values(accounts).flatMap(
+    (account) => account.actions || []
+  );
+
   useEffect(() => {
     dispatch(fetchUserAccounts()).catch(setError);
   }, [dispatch]);
 
   if (!accounts || !user) {
-    return <div className="dashboard"><strong>PLEASE LOGIN TO CONTINUE</strong></div>;
+    return (
+      <div className="dashboard">
+        <strong>PLEASE LOGIN TO CONTINUE</strong>
+      </div>
+    );
   }
 
   if (error) {
@@ -26,20 +33,69 @@ export default function DashBoard() {
   }
 
   function Actions() {
+    const toggleFilter = () => {
+      setIsWeekFilter((prev) => !prev);
+    };
+
+    const filterWeekActions = () => {
+      const currentTime = new Date();
+      const oneWeekFromNow = new Date(currentTime);
+      oneWeekFromNow.setDate(currentTime.getDate() + 7);
+
+      return usersActions.filter((action) => {
+        const actionDate = new Date(action.reminder);
+        return actionDate >= currentTime && actionDate <= oneWeekFromNow;
+      });
+    };
+    const filterMonthActions = () => {
+      const currentTime = new Date();
+      const oneMonthFromNow = new Date(currentTime);
+      oneMonthFromNow.setDate(currentTime.getDate() + 30);
+
+      return usersActions.filter((action) => {
+        const actionDate = new Date(action.reminder);
+        return actionDate >= currentTime && actionDate <= oneMonthFromNow;
+      });
+    };
+    const weekActions = filterWeekActions();
+    const monthActions = filterMonthActions();
+
     return (
       <div className="account-filter">
-        <div className="dashboard__accounts">
+        <div className="dashboard__actions">
           <h4>Actions</h4>
-          {usersActions.length > 0 ? (
-            usersActions.map((action) => (
+          <button onClick={() => setIsWeekFilter(true)}>Weekly</button>
+          <button onClick={() => setIsWeekFilter(false)}>Monthly</button>
+          {isWeekFilter ? (
+            weekActions.length > 0 ? (
+              weekActions.map((action) => (
+                <div key={action.id}>
+                  <NavLink to={`/account/${action.accountId}`}>
+                    <p>
+                      Action: {action.report}
+                      <br></br>
+                      <span>Due by: {action.reminder}</span>
+                    </p>
+                  </NavLink>
+                </div>
+              ))
+            ) : (
+              <p>No actions available within the next week.</p>
+            )
+          ) : monthActions.length > 0 ? (
+            monthActions.map((action) => (
               <div key={action.id}>
                 <NavLink to={`/account/${action.accountId}`}>
-                  <p>Action: {action.report}</p>
+                  <p>
+                    Action: {action.report}
+                    <br></br>
+                    <span>Due by: {action.reminder}</span>
+                  </p>
                 </NavLink>
               </div>
             ))
           ) : (
-            <p>No actions available</p>
+            <p>No actions available within the next month.</p>
           )}
         </div>
       </div>
@@ -66,13 +122,8 @@ export default function DashBoard() {
         <FilterAccounts />
       </div>
       <div className="filter-cards">
-        {usersActions.length > 0 ? (
-          <Actions />
-        ) : (
-          <p>Loading actions...</p>
-        )}
+        {usersActions.length > 0 ? <Actions /> : <p>Loading actions...</p>}
       </div>
     </div>
   );
 }
-

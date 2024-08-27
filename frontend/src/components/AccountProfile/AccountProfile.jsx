@@ -122,6 +122,8 @@ export default function AccountProfile() {
               <div key={action.id}>
                 <NavLink>
                   <p>Action: {action.report}</p>
+                  <p>{action.details}</p>
+                  <p>Due by: {action.reminder}</p>
                 </NavLink>
                 <button onClick={(e) => handleRemoveAction(e, action.id)}>
                   Remove Action
