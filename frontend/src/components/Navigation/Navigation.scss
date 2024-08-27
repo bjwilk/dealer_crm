@@ -51,4 +51,36 @@ $nav-text-color: #fff;
       background-color: $button-hover-color;
     }
   }
+
+  // Media Queries
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+
+    a {
+      button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+
+    button {
+      width: 100%;
+      margin: 5px 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px;
+
+    a {
+      button {
+        padding: 6px;
+      }
+    }
+
+    button {
+      padding: 6px;
+    }
+  }
 }
