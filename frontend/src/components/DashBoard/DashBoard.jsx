@@ -18,7 +18,7 @@ export default function DashBoard() {
   }, [dispatch]);
 
   if (!accounts || !user) {
-    return <div>Loading...</div>;
+    return <div className="dashboard"><strong>PLEASE LOGIN TO CONTINUE</strong></div>;
   }
 
   if (error) {

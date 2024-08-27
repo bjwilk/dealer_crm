@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as sessionActions from "../../store/session";
 import { fetchUserAccounts } from "../../store/accounts";
 import './Navigation.scss'
@@ -8,6 +8,8 @@ import './Navigation.scss'
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user);
+
 
   const logout = (e) => {
     e.preventDefault();
@@ -23,12 +25,12 @@ export default function Header() {
         <button>DashBoard</button>
       </Link>
       <Link to="/Login">
-        <button>Login</button>
+        {!user && <button>Login</button>}
       </Link>
       <Link to={"/CreateAccount"}>
         <button>Create Account</button>
       </Link>
-      <button onClick={logout}>Logout</button>
+     {user && <button onClick={logout}>Logout</button>}
     </div>
   );
   
