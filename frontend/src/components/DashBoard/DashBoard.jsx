@@ -33,9 +33,6 @@ export default function DashBoard() {
   }
 
   function Actions() {
-    const toggleFilter = () => {
-      setIsWeekFilter((prev) => !prev);
-    };
 
     const filterWeekActions = () => {
       const currentTime = new Date();

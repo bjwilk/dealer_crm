@@ -7,7 +7,7 @@ import {
   fetchDeleteAction,
   fetchDeleteContact,
 } from "../../store/accounts";
-import { fetchDeleteOrder } from "../../store/orders"
+import { fetchDeleteOrder } from "../../store/orders";
 import "./AccountProfile.scss";
 
 export default function AccountProfile() {
@@ -15,6 +15,7 @@ export default function AccountProfile() {
   const dispatch = useDispatch();
   // const navigate = useNavigate()
   const [profile, setProfile] = useState({});
+  const [isWeekFilter, setIsWeekFilter] = useState(true);
   // const accounts = useSelector((state) => state.accounts);
   const user = useSelector((state) => state.session.user);
   const acctId = parseInt(id);
@@ -108,6 +109,29 @@ export default function AccountProfile() {
   };
 
   function Actions() {
+    const filterWeekActions = () => {
+      const currentTime = new Date();
+      const oneWeekFromNow = new Date(currentTime);
+      oneWeekFromNow.setDate(currentTime.getDate() + 7);
+
+      return usersActions.filter((action) => {
+        const actionDate = new Date(action.reminder);
+        return actionDate >= currentTime && actionDate <= oneWeekFromNow;
+      });
+    };
+    const filterMonthActions = () => {
+      const currentTime = new Date();
+      const oneMonthFromNow = new Date(currentTime);
+      oneMonthFromNow.setDate(currentTime.getDate() + 30);
+
+      return usersActions.filter((action) => {
+        const actionDate = new Date(action.reminder);
+        return actionDate >= currentTime && actionDate <= oneMonthFromNow;
+      });
+    };
+    const weekActions = filterWeekActions();
+    const monthActions = filterMonthActions();
+
     return (
       <div className="account-filter">
         <div className="dashboard__actions">
@@ -117,28 +141,49 @@ export default function AccountProfile() {
               Add Action
             </button>
           </NavLink>
-          {usersActions.length > 0 ? (
-            usersActions.map((action) => (
+          <br></br>
+          <button onClick={() => setIsWeekFilter(true)}>Weekly</button>
+          <button onClick={() => setIsWeekFilter(false)}>Monthly</button>
+          {isWeekFilter ? (
+            weekActions.length > 0 ? (
+              weekActions.map((action) => (
+                <div key={action.id}>
+                  <NavLink to={`/account/${action.accountId}`}>
+                    <p>
+                      Action: {action.report}
+                      <br></br>
+                      <span>Due by: {action.reminder}</span>
+                    </p>
+                  </NavLink>
+                  <button onClick={(e) => handleRemoveAction(e, action.id)}>
+                    Remove Action
+                  </button>{" "}
+                </div>
+              ))
+            ) : (
+              <p>No actions available within the next week.</p>
+            )
+          ) : monthActions.length > 0 ? (
+            monthActions.map((action) => (
               <div key={action.id}>
-                <NavLink>
-                  <p>Action: {action.report}</p>
-                  <p>{action.details}</p>
-                  <p>Due by: {action.reminder}</p>
+                <NavLink to={`/account/${action.accountId}`}>
+                  <p>
+                    Action: {action.report}
+                    <br></br>
+                    <span>Due by: {action.reminder}</span>
+                  </p>
                 </NavLink>
-                <button onClick={(e) => handleRemoveAction(e, action.id)}>
-                  Remove Action
-                </button>
               </div>
             ))
           ) : (
-            <p>No actions available</p>
+            <p>No actions available within the next month.</p>
           )}
         </div>
       </div>
     );
   }
 
-    //  Optimistic UI Update: After the deletion request, the local profile state is immediately updated to remove the deleted action, without waiting for a full refetch.
+  //  Optimistic UI Update: After the deletion request, the local profile state is immediately updated to remove the deleted action, without waiting for a full refetch.
   //  This method does not require refetching the entire profile or actions list, making the UI more efficient and responsive.
   const handleRemoveOrder = async (e, orderId) => {
     e.preventDefault();
@@ -146,9 +191,7 @@ export default function AccountProfile() {
       await dispatch(fetchDeleteOrder(orderId));
       setProfile((prevProfile) => ({
         ...prevProfile,
-        orders: prevProfile.orders.filter(
-          (order) => order.id !== orderId
-        ),
+        orders: prevProfile.orders.filter((order) => order.id !== orderId),
       }));
     } catch (err) {
       console.error("Failed to delete order:", err);
@@ -173,7 +216,9 @@ export default function AccountProfile() {
               <NavLink to={`/account/${acctId}/update-order/${order.id}`}>
                 <button>Update</button>
               </NavLink>
-              <button onClick={(e) => handleRemoveOrder(e, order.id)}>Delete</button>
+              <button onClick={(e) => handleRemoveOrder(e, order.id)}>
+                Delete
+              </button>
             </div>
           ))
         ) : (
