@@ -27,6 +27,19 @@ function SignUp(){
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const newErrors = {};
+    if (!email) newErrors.email = "Email name is required";
+    if (!username) newErrors.username = "User Name is required";
+    if (!password) newErrors.password = "Password is required";
+    if (!confirmPassword) newErrors.confirmPassword = "Confirm Password is required";
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     if (password === confirmPassword) {
       setErrors({});
       return dispatch(

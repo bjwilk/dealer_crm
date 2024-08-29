@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchCreateAction } from "../../store/accounts";
+import "./CreateAction.scss";
 
 const CreateAction = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const CreateAction = () => {
     details: "",
     reminder: "",
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const acctId = parseInt(id);
@@ -25,19 +27,35 @@ const CreateAction = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const newErrors = {};
+    if (!contactInfo.details)
+      newErrors.details = "Action title name is required";
+    if (!contactInfo.report) newErrors.report = "Action report is required";
+    if (!contactInfo.reminder)
+      newErrors.reminder = "Complete by date is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const payload = {
       ...contactInfo,
       accountId: acctId,
     };
-    console.log("Reminder:", contactInfo.reminder)
-
+    console.log("Reminder:", contactInfo.reminder);
 
     try {
       await dispatch(fetchCreateAction(acctId, payload));
       navigate(`/account/${acctId}`);
     } catch (err) {
-      console.error(err);
+      const data = await err.json();
+      if (data?.errors) {
+        setErrors(data.errors);
+      }
+      console.error(errors.data.errors);
     }
   };
 
@@ -53,13 +71,20 @@ const CreateAction = () => {
             value={contactInfo.report}
             onChange={handleChange}
           />
+          {errors.details && <p className="error-message">{errors.details}</p>}
+
           <input
             type="text"
             name="details"
-            placeholder="Details"
+            placeholder="Report"
             value={contactInfo.details}
             onChange={handleChange}
           />
+          {errors.report && <p className="error-message">{errors.report}</p>}
+          <label>Complete by</label>
+          {errors.reminder && (
+            <p className="error-message">{errors.reminder}</p>
+          )}
           <input
             type="date"
             name="reminder"
@@ -67,7 +92,6 @@ const CreateAction = () => {
             value={contactInfo.reminder}
             onChange={handleChange}
           />
-
           <button className="create-button" type="submit">
             Create Action
           </button>

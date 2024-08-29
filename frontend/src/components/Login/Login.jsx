@@ -1,38 +1,41 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SignUp from "../Signup/Signup";
 import { Link, useNavigate } from "react-router-dom";
 import * as sessionActions from "../../store/session";
-import "./Login.scss"
-
+import "./Login.scss";
 
 function Login() {
-const user = useSelector(state => state.session.user)
+  const user = useSelector((state) => state.session.user);
   const dispatch = useDispatch();
   const [credential, setCredential] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  // const { closeModal } = useModal();
   const navigate = useNavigate();
 
-  const isButtonDisabled = credential.length < 4 || password.length < 6;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+    const newErrors = {};
+    if (!credential)
+      newErrors.credential = "Email or UserName name is required";
+    if (!password) newErrors.password = "Password is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     try {
       await dispatch(sessionActions.login({ credential, password }));
-      // closeModal();
       navigate("/");
-    } catch (err) {
-      if (err.response && err.response.data && err.response.data.errors) {
-        setErrors(err.response.data.errors);
-      } else {
-        console.error("Failed to log in:", err);
-        setErrors({ password: "Failed to log in. Please try again." });
+    } catch (err){
+      const data = await err.json();
+      if (data?.errors) {
+        setErrors(data.errors);
       }
-    }
+      console.error(errors.data.errors);
+  }
   };
 
   const handleDemoLogin = async (e) => {
@@ -43,7 +46,6 @@ const user = useSelector(state => state.session.user)
       await dispatch(
         sessionActions.login({ credential: "FakerUser1", password: "password" })
       );
-      // closeModal();
       navigate("/");
     } catch (err) {
       console.error("Failed to log in as demo user:", err);
@@ -51,9 +53,9 @@ const user = useSelector(state => state.session.user)
     }
   };
 
-if(user){
-  return <div>Already logged in</div>
-}
+  if (user) {
+    return <div>Already logged in</div>;
+  }
 
   return (
     <>
@@ -68,6 +70,10 @@ if(user){
             required
           />
         </label>
+        {errors.credential && (
+            <p className="error-message">{errors.credential}</p>
+          )}
+
         <label className="input-field">
           Password
           <input
@@ -76,6 +82,9 @@ if(user){
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          {errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
         </label>
 
         <div className="error-container">
@@ -102,7 +111,6 @@ if(user){
         <div className="button-group">
           <button
             className="form-button"
-            disabled={isButtonDisabled}
             type="submit"
           >
             Log In
@@ -112,8 +120,7 @@ if(user){
             Demo User
           </button>
           <br></br>
-       <Link to="/signup">Sign Up</Link>
-
+          <Link to="/signup">Sign Up</Link>
         </div>
       </form>
     </>
