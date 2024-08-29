@@ -82,3 +82,10 @@ $button-hover-color: darken($button-color, 10%);
     }
   }
 }
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}

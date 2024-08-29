@@ -41,7 +41,10 @@ $form-button-hover: #0056b3; // Example hover color for buttons
     margin-bottom: 15px;
 
     .error-message {
-      margin: 5px 0;
+      color: red;
+      font-size: 0.875rem;
+      margin-top: -8px;
+      margin-bottom: 10px;
     }
   }
 

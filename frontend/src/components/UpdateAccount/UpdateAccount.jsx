@@ -119,6 +119,26 @@ const UpdateAccount = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const newErrors = {};
+    if (!addressInfo.companyName) newErrors.companyName = "Company name is required";
+    if (!addressInfo.businessType) newErrors.businessType = "Vocation is required";
+    if (!addressInfo.equipmentType) newErrors.equipmentType = "Equipment type is required";
+    if (!addressInfo.fleetSize) newErrors.fleetSize = "Fleet size is required";
+    if (!addressInfo.lookingFor) newErrors.lookingFor = "Looking-for is required";
+    if (!addressInfo.email) newErrors.email = "Email is required";
+    if (!addressInfo.phoneNumber) newErrors.phoneNumber = "Number is required";
+    if (!addressInfo.address) newErrors.address = "address is required";
+    if (!addressInfo.city) newErrors.city = "city is required";
+    if (!addressInfo.state) newErrors.state = "state is required";
+    if (!addressInfo.zipCode) newErrors.zipCode = "zipCode is required";
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const processedEquipmentType = addressInfo.equipmentType.toString();
 
     const payload = {
@@ -129,7 +149,7 @@ const UpdateAccount = () => {
 
     let newAccount;
     try {
-      const newAccount = await dispatch(fetchUpdateAccount(payload));
+      newAccount = await dispatch(fetchUpdateAccount(payload));
       navigate(`/account/${acctId}`);
     } catch (err) {
       if (err.response) {
@@ -138,9 +158,10 @@ const UpdateAccount = () => {
         if (data?.errors) {
           setErrors(data.errors);
         }
+        console.error(errors.data.errors)
       } else {
-        // Handle other types of errors (e.g., network errors)
-        // setErrors(["An unexpected error occurred. Please try again."]);
+         setErrors(["An unexpected error occurred. Please try again."]);
+         console.error(errors)
       }
     }
   };
@@ -161,7 +182,9 @@ const UpdateAccount = () => {
         phoneNumber={addressInfo.phoneNumber}
         address={addressInfo.address}
         city={addressInfo.city}
+        state={addressInfo.state}
         zipCode={addressInfo.zipCode}
+        errors={errors}
       />
     </>
   );

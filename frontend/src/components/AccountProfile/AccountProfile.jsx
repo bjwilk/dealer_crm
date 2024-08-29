@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, NavLink } from "react-router-dom";
-// import Profile from "../Profile/Profile";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAccountProfile,
@@ -13,10 +12,8 @@ import "./AccountProfile.scss";
 export default function AccountProfile() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  // const navigate = useNavigate()
   const [profile, setProfile] = useState({});
   const [isWeekFilter, setIsWeekFilter] = useState(true);
-  // const accounts = useSelector((state) => state.accounts);
   const user = useSelector((state) => state.session.user);
   const acctId = parseInt(id);
 
@@ -220,8 +217,9 @@ export default function AccountProfile() {
         </Link>
         {profile && profile.orders && profile.orders.length > 0 ? (
           profile.orders.map((order, index) => (
-            <div key={index}>
+            <div className="quote-card" key={index}>
               <NavLink to={`/sales-order/${order.id}`}>
+                <button>View</button>
                 <p>VIN: {order.vin}</p>
               </NavLink>
               <NavLink to={`/account/${acctId}/update-order/${order.id}`}>
@@ -281,6 +279,3 @@ export default function AccountProfile() {
     </div>
   );
 }
-
-
-

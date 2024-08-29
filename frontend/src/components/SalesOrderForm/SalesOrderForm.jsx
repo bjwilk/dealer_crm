@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { OrderContext } from "../../context/OrderContext";
 import "./SalesOrderForm.scss";
@@ -9,20 +9,17 @@ import { csrfFetch } from "../../store/csrf";
 const SalesOrderForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user);
+  const navigate = useNavigate();
+  const { orderDetails, handleChange } = useContext(OrderContext);
   const [companyInfo, setCompanyInfo] = useState({
     companyName: "",
     address: "",
     city: "",
     state: "",
     zipCode: null,
-    email: "",
-    bodies: 0,
-    extras: 0,
   });
-  const user = useSelector((state) => state.session.user);
-  const navigate = useNavigate();
-  const { orderDetails, handleChange } = useContext(OrderContext);
-
+  const [errors, setErrors] = useState({});
   const acctId = parseInt(id);
 
   const fetchAccounts = async () => {
@@ -49,6 +46,22 @@ const SalesOrderForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({})
+
+    const newErrors = {};
+    if (!orderDetails.vin) newErrors.vin = "VIN is required";
+    if (!orderDetails.model) newErrors.model = "Model is required";
+    if (!orderDetails.year) newErrors.year = "Year is required";
+    if (!orderDetails.price) newErrors.price = "Price is required";
+    if (!orderDetails.tax) newErrors.tax = "Tax is required";
+    if (!orderDetails.license) newErrors.license = "License Fee is required";
+    if (!orderDetails.condition) newErrors.condition = "New or Used is required";
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     const payload = {
       accountId: acctId,
       ...orderDetails,
@@ -56,10 +69,14 @@ const SalesOrderForm = () => {
 
     let newOrder;
     try {
-      const newOrder = await dispatch(createNewOrder(acctId, payload));
+      newOrder = await dispatch(createNewOrder(acctId, payload));
       navigate(`/sales-order/${newOrder.id}`);
     } catch (err) {
-      console.error(err);
+      const data = await err.json();
+      if (data?.errors) {
+        setErrors(data.errors);
+      }
+      console.error(errors.data.errors);
     }
   };
 
@@ -81,6 +98,7 @@ const SalesOrderForm = () => {
             value={orderDetails.vin}
             onChange={handleChange}
           />
+           {errors.vin && <p className="error-message">{errors.vin}</p>}
           <input
             type="text"
             name="model"
@@ -88,6 +106,7 @@ const SalesOrderForm = () => {
             value={orderDetails.model}
             onChange={handleChange}
           />
+           {errors.model && <p className="error-message">{errors.model}</p>}
           <input
             type="text"
             name="year"
@@ -95,6 +114,7 @@ const SalesOrderForm = () => {
             value={orderDetails.year}
             onChange={handleChange}
           />
+           {errors.year && <p className="error-message">{errors.year}</p>}
           <div className="condition-box">
             <label>
               <input
@@ -122,6 +142,7 @@ const SalesOrderForm = () => {
               />
               Used
             </label>
+            {errors.condition && <p className="error-message">{errors.condition}</p>}
           </div>
           <label>Price</label>
           <input
@@ -131,6 +152,7 @@ const SalesOrderForm = () => {
             value={orderDetails.price}
             onChange={handleChange}
           />
+           {errors.price && <p className="error-message">{errors.price}</p>}
           <label>Body & Equipment</label>
           <input
             type="number"
@@ -155,6 +177,7 @@ const SalesOrderForm = () => {
             value={orderDetails.tax}
             onChange={handleChange}
           />
+           {errors.tax && <p className="error-message">{errors.tax}</p>}
           <label>License Fee</label>
           <input
             type="text"
@@ -163,6 +186,7 @@ const SalesOrderForm = () => {
             value={orderDetails.license}
             onChange={handleChange}
           />
+           {errors.license && <p className="error-message">{errors.license}</p>}
           <button className="create-button" type="submit">
             Create Order
           </button>

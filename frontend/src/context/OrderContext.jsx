@@ -24,41 +24,7 @@ export const OrderProvider = ({ children }) => {
     });
   };
 
-  const handleNew = (e) => {
 
-  }
-
-  // const handleAddBody = () => {
-  //   setOrderDetails({
-  //     ...orderDetails,
-  //     bodies: [...orderDetails.bodies, ""],
-  //   });
-  // };
-
-  // const handleRemoveBody = (index) => {
-  //   const updatedBodies = [...orderDetails.bodies];
-  //   updatedBodies.splice(index, 1);
-  //   setOrderDetails({
-  //     ...orderDetails,
-  //     bodies: updatedBodies,
-  //   });
-  // };
-
-  // const handleAddExtra = () => {
-  //   setOrderDetails({
-  //     ...orderDetails,
-  //     extras: [...orderDetails.extras, ""],
-  //   });
-  // };
-
-  // const handleRemoveExtra = (index) => {
-  //   const updatedExtras = [...orderDetails.extras];
-  //   updatedExtras.splice(index, 1);
-  //   setOrderDetails({
-  //     ...orderDetails,
-  //     extras: updatedExtras,
-  //   });
-  // };
 
   return (
     <OrderContext.Provider

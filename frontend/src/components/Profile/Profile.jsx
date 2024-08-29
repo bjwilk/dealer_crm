@@ -1,5 +1,4 @@
-import React from "react";
-import "./Profile.scss"
+import "./Profile.scss";
 
 const Profile = (props) => {
   return (
@@ -35,27 +34,30 @@ const Profile = (props) => {
                         onChange={props.handleChange}
                         type="text"
                         className="form-control"
+                        required
                       />
+                      {props.errors && <p className="error-message">{props.errors.companyName}</p>}
                     </div>
                   </div>
                   <div className="col-lg-6">
                     <div className="mb-3">
                       <label className="form-label">Business Type</label>
                       <select
-          className="form-select"
-          value={props.businessType}
-          onChange={props.handleChange}
-          name="businessType"
-        >
-          <option defaultValue>Open this select menu</option>
-          <option value="Construction">Construction</option>
-          <option value="Moving">Moving</option>
-          <option value="Delivery">Delivery</option>
-          <option value="Freight Hauling">Freight Hauling</option>
-          <option value="Landscaping">Landscaping</option>
-          <option value="Transport">Transport</option>
-        </select>
+                        className="form-select"
+                        value={props.businessType}
+                        onChange={props.handleChange}
+                        name="businessType"
+                      >
+                        <option defaultValue>Open this select menu</option>
+                        <option value="Construction">Construction</option>
+                        <option value="Moving">Moving</option>
+                        <option value="Delivery">Delivery</option>
+                        <option value="Freight Hauling">Freight Hauling</option>
+                        <option value="Landscaping">Landscaping</option>
+                        <option value="Transport">Transport</option>
+                      </select>
                     </div>
+                    {props.errors && <p className="error-message">{props.errors.businessType}</p>}
                   </div>
                 </div>
                 <div className="row">
@@ -69,6 +71,7 @@ const Profile = (props) => {
                         type="number"
                         className="form-control"
                       />
+                      {props.errors && <p className="error-message">{props.errors.fleetSize}</p>}
                     </div>
                   </div>
                   <div className="mb-3">
@@ -161,6 +164,7 @@ const Profile = (props) => {
                         Sleeper
                       </label>
                     </div>
+                    {props.errors && <p className="error-message">{props.errors.equipmentType}</p>}
                   </div>
                   <div className="mb-3">
                     <label className="form-label">
@@ -251,6 +255,7 @@ const Profile = (props) => {
                         />
                         Sleeper
                       </label>
+                      {props.errors && <p className="error-message">{props.errors.lookingFor}</p>}
                     </div>
                   </div>
                 </div>
@@ -272,6 +277,7 @@ const Profile = (props) => {
                         type="email"
                         className="form-control"
                       />
+                      {props.errors && <p className="error-message">{props.errors.email}</p>}
                     </div>
                   </div>
                   <div className="col-lg-6">
@@ -284,6 +290,7 @@ const Profile = (props) => {
                         type="tel"
                         className="form-control"
                       />
+                      {props.errors && <p className="error-message">{props.errors.phoneNumber}</p>}
                     </div>
                   </div>
                 </div>
@@ -302,6 +309,7 @@ const Profile = (props) => {
                     type="text"
                     className="form-control"
                   />
+                  {props.errors && <p className="error-message">{props.errors.address}</p>}
                 </div>
                 <div className="row">
                   <div className="col-lg-6"></div>
@@ -411,6 +419,7 @@ const Profile = (props) => {
                           aria-hidden="true"
                         ></span>
                       </span>
+                      {props.errors && <p className="error-message">{props.errors.state}</p>}
                     </div>
                   </div>
                 </div>
@@ -429,6 +438,7 @@ const Profile = (props) => {
                         aria-hidden="true"
                         type="text"
                       />
+                      {props.errors && <p className="error-message">{props.errors.city}</p>}
                     </div>
                   </div>
                   <div className="col-lg-6">
@@ -441,6 +451,7 @@ const Profile = (props) => {
                         type="number"
                         className="form-control"
                       />
+                      {props.errors && <p className="error-message">{props.errors.zipCode}</p>}
                     </div>
                   </div>
                 </div>
