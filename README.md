@@ -13,12 +13,13 @@ This is the starter for the Dealer CRM project.
    ```
 
 3. Create a .env file in the backend folder with these varibles.
-  PORT=<port_number>
+```bash
+   PORT=<port_number>
   JWT_SECRET=<super_secret_number>
   JWT_EXPIRES_IN=<604800>
   SCHEMA=<schema_name>
   DATABASE_URL=<postgresql_database_url>
-
+```
 5. This project is designed to use Postgres in development and Production so you will need to have a postgres db created beforehand to connect project to.
 
 6. This starter organizes all tables inside the `SCHEMA` environment variable.  Replace the value for
@@ -79,11 +80,13 @@ GUI.
 
 Add the following keys and values in the Render GUI form:
 
-  -PORT=<port_number>
-  -JWT_SECRET=<super_secret_number>
-  -JWT_EXPIRES_IN=<604800>
-  -SCHEMA=<schema_name>
-  -DATABASE_URL=<postgresql_database_url>
+ ```bash
+   PORT=<port_number>
+  JWT_SECRET=<super_secret_number>
+  JWT_EXPIRES_IN=<604800>
+  SCHEMA=<schema_name>
+  DATABASE_URL=<postgresql_database_url>
+```
 
 In a new tab, navigate to your dashboard and click on your Postgres database
 instance.
