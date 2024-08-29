@@ -24,8 +24,10 @@ const UpdateOrder = () => {
     tax: "",
     license: "",
     bodies: "",
-    extras: ""
+    extras: "",
   });
+  const [errors, setErrors] = useState({});
+
   const user = useSelector((state) => state.session.user);
   const navigate = useNavigate();
 
@@ -39,7 +41,7 @@ const UpdateOrder = () => {
       }
       const data = await response.json();
       setCompanyInfo(data);
-      const order = data.orders.find(order => order.id === parseInt(orderId));
+      const order = data.orders.find((order) => order.id === parseInt(orderId));
       if (order) {
         setOrderInfo(order);
       }
@@ -56,6 +58,22 @@ const UpdateOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const newErrors = {};
+    if (!orderInfo.vin) newErrors.vin = "VIN is required";
+    if (!orderInfo.model) newErrors.model = "Model is required";
+    if (!orderInfo.year) newErrors.year = "Year is required";
+    if (!orderInfo.price) newErrors.price = "Price is required";
+    if (!orderInfo.tax) newErrors.tax = "Tax is required";
+    if (!orderInfo.license) newErrors.license = "License Fee is required";
+    if (!orderInfo.condition) newErrors.condition = "New or Used is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const payload = {
       accountId: parseInt(id),
       ...orderInfo,
@@ -95,6 +113,8 @@ const UpdateOrder = () => {
             value={orderInfo.vin}
             onChange={handleChange}
           />
+          {errors.vin && <p className="error-message">{errors.vin}</p>}
+
           <input
             type="text"
             name="model"
@@ -102,6 +122,8 @@ const UpdateOrder = () => {
             value={orderInfo.model}
             onChange={handleChange}
           />
+          {errors.model && <p className="error-message">{errors.model}</p>}
+
           <input
             type="text"
             name="year"
@@ -109,6 +131,8 @@ const UpdateOrder = () => {
             value={orderInfo.year}
             onChange={handleChange}
           />
+          {errors.year && <p className="error-message">{errors.year}</p>}
+
           <div className="condition-box">
             <label>
               <input
@@ -116,8 +140,7 @@ const UpdateOrder = () => {
                 name="condition"
                 value="New"
                 checked={
-                  orderInfo.condition &&
-                  orderInfo.condition.includes("New")
+                  orderInfo.condition && orderInfo.condition.includes("New")
                 }
                 onChange={handleChange}
               />
@@ -129,13 +152,15 @@ const UpdateOrder = () => {
                 name="condition"
                 value="Used"
                 checked={
-                  orderInfo.condition &&
-                  orderInfo.condition.includes("Used")
+                  orderInfo.condition && orderInfo.condition.includes("Used")
                 }
                 onChange={handleChange}
               />
               Used
             </label>
+            {errors.condition && (
+              <p className="error-message">{errors.condition}</p>
+            )}
           </div>
           <label>Price</label>
           <input
@@ -145,6 +170,8 @@ const UpdateOrder = () => {
             value={orderInfo.price}
             onChange={handleChange}
           />
+          {errors.price && <p className="error-message">{errors.price}</p>}
+
           <label>Body & Equipment</label>
           <input
             type="number"
@@ -169,6 +196,8 @@ const UpdateOrder = () => {
             value={orderInfo.tax}
             onChange={handleChange}
           />
+          {errors.tax && <p className="error-message">{errors.tax}</p>}
+
           <label>License Fee</label>
           <input
             type="text"
@@ -177,6 +206,8 @@ const UpdateOrder = () => {
             value={orderInfo.license}
             onChange={handleChange}
           />
+          {errors.license && <p className="error-message">{errors.license}</p>}
+
           <button className="create-button" type="submit">
             Update Order
           </button>
