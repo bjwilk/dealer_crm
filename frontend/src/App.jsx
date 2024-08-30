@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import * as sessionActions from "./store/session";
@@ -16,6 +16,7 @@ import UpdateAccount from "./components/UpdateAccount/UpdateAccount";
 import CreateContact from "./components/CreateContact/CreateContact";
 import CreateAction from "./components/CreateAction/CreateAction";
 import UpdateOrder from "./components/UpdateOrder/UpdateOrder";
+import UpdateContact from "./components/UpdateContact/UpdateContact";
 
 
 function Layout() {
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: "/account/:id/update-order/:orderId",
         element: <UpdateOrder />
+      },
+      {
+        path: "/account/:id/update-contact/:contactId",
+        element: <UpdateContact />
       }
     ],
   },

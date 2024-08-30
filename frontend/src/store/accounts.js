@@ -11,6 +11,12 @@ const CREATE_CONTACT = "accounts/createContact";
 const CREATE_ACTION = "accounts/createAction";
 const DELETE_ACTION = "accounts/deleteAction";
 const DELETE_CONTACT = "accounts/deleteContact";
+const UPDATE_CONTACT = "accounts/updateContact";
+
+const updateContact = (payload) => ({
+  type: UPDATE_CONTACT,
+  payload
+})
 
 const deleteContact = (contactId) => ({
   type: DELETE_CONTACT,
@@ -67,6 +73,27 @@ const createAccount = (payload) => ({
   type: CREATE_ACCOUNT,
   payload
 });
+
+export const fetchUpdateContact = (contactId, contact) => async (dispatch) => {
+  try {
+    const res = await csrfFetch(`/api/accounts/company/${contactId}/contacts`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(contact),
+    });
+
+    if (res.ok) {
+      const newContact = await res.json();
+      console.log({newContact})
+      dispatch(updateContact(newContact));
+      return newContact;
+    }
+  } catch (err) {
+    console.error("Error creating contact", err);
+  }
+};
 
 //* Delete a contact by id
 export const fetchDeleteContact = (contactId) => async (dispatch) =>{
@@ -345,6 +372,11 @@ const accountReducer = (state = initialState, action) => {
     const newState = { ...state };
     delete newState[action.contactId];
     return newState;
+  }
+  case UPDATE_CONTACT: {
+    const updatedState = { ...state };
+    updatedState[action.payload.id] = action.payload;
+    return updatedState;
   }
 
     default:
