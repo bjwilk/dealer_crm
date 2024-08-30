@@ -13,7 +13,7 @@ const UpdateOrder = () => {
     address: "",
     city: "",
     state: "",
-    zipCode: null,
+    zipCode: "",
   });
   const [orderInfo, setOrderInfo] = useState({
     vin: "",

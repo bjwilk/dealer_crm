@@ -10,7 +10,7 @@ import { fetchDeleteOrder } from "../../store/orders";
 import "./AccountProfile.scss";
 
 export default function AccountProfile() {
-  const { id } = useParams();
+  const { id, contactId } = useParams();
   const dispatch = useDispatch();
   const [profile, setProfile] = useState({});
   const [isWeekFilter, setIsWeekFilter] = useState(true);
@@ -76,7 +76,10 @@ export default function AccountProfile() {
                 <p>{contact.name}</p>
                 <p>{contact.position}</p>
                 <p>{contact.phone}</p>
+                <p>{contact.email}</p>
+                <NavLink to={`/account/${acctId}/update-contact/${contact.id}`}>
                 <button>Update</button>
+                </NavLink>
                 <button onClick={(e) => handleRemoveContact(e, contact.id)}>
                   Remove Contact
                 </button>
