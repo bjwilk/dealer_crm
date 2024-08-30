@@ -12,6 +12,12 @@ $padding: 16px;
   min-height: 100vh;
   padding: $padding;
 
+  &__not-user {
+    strong {
+      color: white;
+    }
+  }
+
   // Accounts Section
   &__accounts {
     flex: 1;

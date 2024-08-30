@@ -27,9 +27,9 @@ export default function Header() {
       <Link to="/Login">
         {!user && <button>Login</button>}
       </Link>
-      <Link to={"/CreateAccount"}>
+      {user && <Link to={"/CreateAccount"}>
         <button>Create Account</button>
-      </Link>
+      </Link>}
      {user && <button onClick={logout}>Logout</button>}
     </div>
   );
