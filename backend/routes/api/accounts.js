@@ -230,7 +230,31 @@ router.post("/company/:id/contacts", requireAuth, async (req, res, next) => {
     console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
+
+// Update Contact
+router.put("/company/:contactId/contacts", requireAuth, async (req, res, next) => {
+  const contactId = req.params.contactId;
+  const updatedContactData = req.body; // Ensure that req.body only contains fields you want to update
+
+  try {
+    const rowsUpdated = await Contact.update(updatedContactData, {
+      where: { id: contactId },
+    });
+
+    if (rowsUpdated[0] === 0) {
+      res.status(404).json({ error: "Contact not found" });
+      return;
+    }
+
+    const updatedContact = await Contact.findByPk(contactId); // Fetch the updated Contact separately
+
+    res.status(200).json(updatedContact);
+  } catch (error) {
+    console.error("Error updating Contact:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // Update Account
 router.put("/:accountId", requireAuth, async (req, res, next) => {
