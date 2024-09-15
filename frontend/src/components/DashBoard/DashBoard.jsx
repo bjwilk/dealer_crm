@@ -13,6 +13,7 @@ export default function DashBoard() {
   const accounts = useSelector((state) => state.accounts);
   const [isWeekFilter, setIsWeekFilter] = useState(true);
 
+
   const usersActions = Object.values(accounts).flatMap(
     (account) => account.actions || []
   );
@@ -107,13 +108,15 @@ export default function DashBoard() {
       <div className="dashboard__accounts">
         <h4>Accounts</h4>
         {Object.values(accounts).length > 0 ? (
-          Object.values(accounts).map((account) => (
-            <div key={account.id}>
-              <NavLink to={`/account/${account.id}`}>
-                <p>Company Name: {account.companyName}</p>
-              </NavLink>
-            </div>
-          ))
+          <ul>
+            {Object.values(accounts).map((account) => (
+              <li key={account.id}>
+                <NavLink to={`/account/${account.id}`}>
+                  <p>Company Name: {account.companyName}</p>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         ) : (
           <p>No accounts available</p>
         )}
@@ -126,5 +129,7 @@ export default function DashBoard() {
       </div>
     </div>
   );
+  
+  
 }
 

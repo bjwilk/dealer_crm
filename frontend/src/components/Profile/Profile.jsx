@@ -323,7 +323,7 @@ const Profile = (props) => {
                         className="select2 form-control select2-hidden-accessible"
                         data-select2-placeholder="Select state"
                         data-select2-id="select2-data-4-680y"
-                        tabindex="-1"
+                        tabIndex="-1"
                         aria-hidden="true"
                       >
                         <option data-select2-id="select2-data-6-cshs"></option>
@@ -390,7 +390,7 @@ const Profile = (props) => {
                             role="combobox"
                             aria-haspopup="true"
                             aria-expanded="false"
-                            tabindex="0"
+                            tabIndex="0"
                             aria-disabled="false"
                             aria-labelledby="select2-2fn7-container"
                             aria-controls="select2-2fn7-container"
@@ -434,7 +434,7 @@ const Profile = (props) => {
                         className="select2 form-control select2-hidden-accessible"
                         data-select2-placeholder="Select city"
                         data-select2-id="select2-data-7-809c"
-                        tabindex="-1"
+                        tabIndex="-1"
                         aria-hidden="true"
                         type="text"
                       />
