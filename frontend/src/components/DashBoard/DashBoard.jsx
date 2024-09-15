@@ -67,40 +67,46 @@ export default function DashBoard() {
           <h4>Actions</h4>
           <button onClick={() => setIsWeekFilter(true)}>Weekly</button>
           <button onClick={() => setIsWeekFilter(false)}>Monthly</button>
+          
           {isWeekFilter ? (
             weekActions.length > 0 ? (
-              weekActions.map((action) => (
-                <div key={action.id}>
-                  <NavLink to={`/account/${action.accountId}`}>
-                    <p>
-                      <strong>Action:</strong> {action.report}
-                      <br></br>
-                      <span> <strong>Due by:</strong> {action.reminder}</span>
-                    </p>
-                  </NavLink>
-                </div>
-              ))
+              <ul>
+                {weekActions.map((action) => (
+                  <li key={action.id}>
+                    <NavLink to={`/account/${action.accountId}`}>
+                      <p>
+                        <strong>Action:</strong> {action.report}
+                        <br />
+                        <span><strong>Due by:</strong> {action.reminder}</span>
+                      </p>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <p>No actions available within the next week.</p>
             )
           ) : monthActions.length > 0 ? (
-            monthActions.map((action) => (
-              <div key={action.id}>
-              <NavLink to={`/account/${action.accountId}`}>
-                <p>
-                  <strong>Action:</strong> {action.report}
-                  <br></br>
-                  <span> <strong>Due by:</strong> {action.reminder}</span>
-                </p>
-              </NavLink>
-            </div>
-        ))
+            <ul>
+              {monthActions.map((action) => (
+                <li key={action.id}>
+                  <NavLink to={`/account/${action.accountId}`}>
+                    <p>
+                      <strong>Action:</strong> {action.report}
+                      <br />
+                      <span><strong>Due by:</strong> {action.reminder}</span>
+                    </p>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
           ) : (
             <p>No actions available within the next month.</p>
           )}
         </div>
       </div>
     );
+    
   }
 
   return (
@@ -109,13 +115,15 @@ export default function DashBoard() {
         <h4>Accounts</h4>
         {Object.values(accounts).length > 0 ? (
           <ul>
-            {Object.values(accounts).map((account) => (
-              <li key={account.id}>
-                <NavLink to={`/account/${account.id}`}>
-                  <p>Company Name: {account.companyName}</p>
-                </NavLink>
-              </li>
-            ))}
+            {Object.values(accounts).map((account, index) => {
+              return (
+                <li key={account.id || index}>
+                  <NavLink to={`/account/${account.id}`}>
+                    <p>Company Name: {account.companyName}</p>
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p>No accounts available</p>
@@ -129,6 +137,7 @@ export default function DashBoard() {
       </div>
     </div>
   );
+  
   
   
 }
