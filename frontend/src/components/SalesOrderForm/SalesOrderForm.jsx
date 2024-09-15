@@ -31,7 +31,6 @@ const SalesOrderForm = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-      console.log({ data });
       setCompanyInfo(data);
     } catch (error) {
       console.error("Error fetching data:", error);

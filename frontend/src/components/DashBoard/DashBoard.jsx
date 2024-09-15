@@ -118,6 +118,7 @@ export default function DashBoard() {
             {Object.values(accounts).map((account, index) => {
               return (
                 <li key={account.id || index}>
+                  {/* fixed key prop error */}
                   <NavLink to={`/account/${account.id}`}>
                     <p>Company Name: {account.companyName}</p>
                   </NavLink>

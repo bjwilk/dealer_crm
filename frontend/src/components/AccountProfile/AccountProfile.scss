@@ -9,6 +9,11 @@ $button-text-color: #fff;
 $card-background-color: #fff;
 $card-border-color: #ddd;
 $card-shadow-color: rgba(0, 0, 0, 0.1);
+$form-background: #f9f9f9;
+$form-border-color: #ddd;
+$form-border-radius: 8px;
+$delete-button-background: #e74c3c;
+$delete-button-hover-background: darken(#e74c3c, 10%);
 
 // Dashboard Container
 .dashboard {
@@ -32,6 +37,16 @@ $card-shadow-color: rgba(0, 0, 0, 0.1);
       max-width: 20%; // Ensure it doesn't exceed 40% of container width
     }
 
+    // Specific styling for delete button
+.btn-delete {
+  background-color: $delete-button-background;
+  color: $button-text-color;
+
+  &:hover {
+    background-color: $delete-button-hover-background;
+  }
+}
+
     span {
       display: block;
       margin-bottom: 8px;
@@ -40,7 +55,6 @@ $card-shadow-color: rgba(0, 0, 0, 0.1);
 
     button {
       margin-bottom: $padding;
-      margin: 3px;
       background-color: $button-background;
       color: $button-text-color;
       border: none;
@@ -61,7 +75,7 @@ $card-shadow-color: rgba(0, 0, 0, 0.1);
     a {
       text-decoration: none;
       color: inherit;
-      
+
       p {
         margin: 0;
         padding: 8px;
@@ -106,7 +120,75 @@ $card-shadow-color: rgba(0, 0, 0, 0.1);
     }
   }
 
-  &__profile,
+  .dashboard__profile {
+    flex: 1 1 100%;
+    background-color: $form-background;
+    padding: $padding;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid $form-border-color;
+    border-radius: $form-border-radius;
+    margin-left: $padding;
+    margin-bottom: $padding;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  
+    @media (min-width: 1200px) {
+      flex: 1 1 auto;
+    }
+  
+    h2 {
+      margin-top: 0;
+      color: $primary-color;
+    }
+  
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid $form-border-color;
+      padding-bottom: 8px;
+    }
+  
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  
+      p, span {
+        margin: 0;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+    }
+  
+    .profile-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+  
+      .btn {
+        flex: 1;
+        padding: 10px;
+        font-size: 14px;
+      }
+  
+      .btn-primary {
+        background-color: $button-background;
+        color: $button-text-color;
+      }
+  
+      .btn-delete {
+        background-color: #e74c3c;
+        color: $button-text-color;
+  
+        &:hover {
+          background-color: darken(#e74c3c, 10%);
+        }
+      }
+    }
+  }
+
   &__contacts,
   &__actions {
     flex: 1 1 100%; // Keep default full width for smaller screens
@@ -119,5 +201,35 @@ $card-shadow-color: rgba(0, 0, 0, 0.1);
     @media (min-width: 1200px) {
       flex: 1 1 auto; // Allow these sections to flex naturally
     }
+  }
+}
+
+// Button Spacing
+.btn-group {
+  display: flex;
+  gap: 10px; // Adjust the value as needed
+}
+
+.btn {
+  background-color: $button-background;
+  color: $button-text-color;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 10px;
+  &:hover {
+    background-color: $button-hover-background;
+  }
+}
+
+// Specific styling for delete button
+.btn-delete {
+  background-color: $delete-button-background;
+  color: $button-text-color;
+
+  &:hover {
+    background-color: $delete-button-hover-background;
   }
 }
