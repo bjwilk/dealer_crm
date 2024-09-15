@@ -2,71 +2,78 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import * as sessionActions from "../../store/session";
-import "./Signup.scss"
+import "./Signup.scss";
 
-
-function SignUp(){
+function SignUp() {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
-  // const { closeModal } = useModal();
+  const [isChecking, setIsChecking] = useState(false); // Added for async checking state
 
-  let isButtonDisabled;
-  if (username.length < 4 || password.length < 6) {
-    isButtonDisabled = true;
-  } else if (
-    !email.length ||
-    !confirmPassword.length
-  ) {
-    isButtonDisabled = true;
-  }
+  let isButtonDisabled = username.length < 4 || password.length < 6 || !email.length || !confirmPassword.length;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
-
     const newErrors = {};
-    if (!email) newErrors.email = "Email name is required";
-    if (!username) newErrors.username = "User Name is required";
+
+    if (!email) newErrors.email = "Email is required";
+    if (!username) newErrors.username = "Username is required";
     if (!password) newErrors.password = "Password is required";
     if (!confirmPassword) newErrors.confirmPassword = "Confirm Password is required";
-
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    if (password === confirmPassword) {
-      setErrors({});
-      return dispatch(
-        sessionActions.signup({
-          email,
-          username,
-          password,
-        })
-      )
-        .then(navigate('/'))
-        .catch(async (res) => {
-          const data = await res.json();
-          if (data?.errors) {
-            setErrors(data.errors);
-          }
-        });
+
+    // Async validation for email and username
+    setIsChecking(true); // To indicate the check is in progress
+    try {
+      const emailExists = await dispatch(sessionActions.checkEmailExists(email));
+      const usernameExists = await dispatch(sessionActions.checkUsernameExists(username));
+
+      if (emailExists) {
+        newErrors.email = "Email already exists";
+      }
+
+      if (usernameExists) {
+        newErrors.username = "Username already exists";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        setIsChecking(false);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setErrors({ confirmPassword: "Passwords do not match" });
+        setIsChecking(false);
+        return;
+      }
+
+      // Proceed with signup if no errors
+      await dispatch(sessionActions.signup({ email, username, password }));
+      navigate("/");
+
+    } catch (error) {
+      console.error("Error during signup process:", error);
+      setErrors({ general: "An unexpected error occurred. Please try again." });
+    } finally {
+      setIsChecking(false);
     }
-    return setErrors({
-      confirmPassword:
-        "Confirm Password field must be the same as the Password field",
-    });
   };
 
   return (
     <>
       <h1>Sign Up</h1>
       <form className="signup-form" onSubmit={handleSubmit}>
+        {errors.general && <p className="error-message">{errors.general}</p>}
         <label className="input-field">
           Email
           <input
@@ -106,15 +113,9 @@ function SignUp(){
             required
           />
         </label>
-        {errors.confirmPassword && (
-          <p className="error-message">{errors.confirmPassword}</p>
-        )}
-        <button
-          className="form-button"
-          disabled={isButtonDisabled}
-          type="submit"
-        >
-          Sign Up
+        {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
+        <button className="form-button" disabled={isButtonDisabled || isChecking} type="submit">
+          {isChecking ? "Checking..." : "Sign Up"}
         </button>
       </form>
     </>
