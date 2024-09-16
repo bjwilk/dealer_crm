@@ -12,13 +12,11 @@ function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     const newErrors = {};
-    if (!credential)
-      newErrors.credential = "Email or UserName name is required";
+    if (!credential) newErrors.credential = "Email or UserName name is required";
     if (!password) newErrors.password = "Password is required";
 
     if (Object.keys(newErrors).length > 0) {
@@ -29,13 +27,13 @@ function Login() {
     try {
       await dispatch(sessionActions.login({ credential, password }));
       navigate("/");
-    } catch (err){
+    } catch (err) {
       const data = await err.json();
       if (data?.errors) {
         setErrors(data.errors);
       }
-      console.error(errors.data.errors);
-  }
+      console.error(data.errors);
+    }
   };
 
   const handleDemoLogin = async (e) => {
@@ -71,8 +69,8 @@ function Login() {
           />
         </label>
         {errors.credential && (
-            <p className="error-message">{errors.credential}</p>
-          )}
+          <p className="error-message">{errors.credential}</p>
+        )}
 
         <label className="input-field">
           Password
@@ -82,9 +80,6 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {errors.password && (
-            <p className="error-message">{errors.password}</p>
-          )}
         </label>
 
         <div className="error-container">
@@ -102,27 +97,26 @@ function Login() {
             </p>
           )}
           {!errors.credential && errors.password && (
-            <p className="error-message">
-              The provided credentials were invalid: {errors.password}
-            </p>
+            <p className="error-message">{errors.password}</p>
           )}
         </div>
-        <br></br>
+        <br />
         <div className="button-group">
-          <button
-            className="form-button"
-            type="submit"
-          >
+          <button className="form-button" type="submit">
             Log In
           </button>
-          <br></br>
+          <br />
           <button className="form-button" onClick={handleDemoLogin}>
             Demo User
           </button>
-          <br></br>
-          <Link to="/signup">Sign Up</Link>
         </div>
       </form>
+      {/* Move the Sign Up link outside of the form */}
+      <br />
+      <div className="signup-link">
+        <p>Don&apos;t have an account?</p>
+        <button className="btn" onClick={() => navigate("/signup")}>Sign Up</button>
+      </div>
     </>
   );
 }

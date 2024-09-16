@@ -36,6 +36,8 @@ $form-button-hover: #0056b3; // Example hover color for buttons
     }
   }
 
+
+
   .error-container {
     color: $error-color;
     margin-bottom: 15px;
@@ -75,4 +77,26 @@ $form-button-hover: #0056b3; // Example hover color for buttons
       }
     }
   }
+}
+
+.signup-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.signup-link .btn {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: $form-button-background;
+  color: $form-button-color;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
 }

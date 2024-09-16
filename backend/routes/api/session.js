@@ -46,42 +46,57 @@ router.get(
 
 // Log in
 router.post(
-    '/',
-    validateLogin,
-    async (req, res, next) => {
-      const { credential, password } = req.body;
-  
-      const user = await User.unscoped().findOne({
-        where: {
-          [Op.or]: {
-            username: credential,
-            email: credential
-          }
+  '/',
+  validateLogin,
+  async (req, res, next) => {
+    const { credential, password } = req.body;
+
+    // Check if user exists based on username or email
+    const user = await User.unscoped().findOne({
+      where: {
+        [Op.or]: {
+          username: credential,
+          email: credential
         }
-      });
-  
-      if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-        const err = new Error('Login failed');
-        err.status = 401;
-        err.title = 'Login failed';
-        err.errors = { credential: 'The provided credentials were invalid.' };
-        return next(err);
       }
-  
-      const safeUser = {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-      };
-      console.log("response", res)
-  
-      await setTokenCookie(res, user);
-  
-      return res.json({
-        user: safeUser
-      });
+    });
+
+    // If the user doesn't exist
+    if (!user) {
+      const err = new Error('Login failed');
+      err.status = 401;
+      err.title = 'Login failed';
+      err.errors = { credential: ' username is incorrect.' };
+      return next(err);
     }
-  );
+
+    // If password is incorrect
+    const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword.toString());
+    if (!isPasswordValid) {
+      const err = new Error('Login failed');
+      err.status = 401;
+      err.title = 'Login failed';
+      err.errors = { password: 'Password is incorrect.' };
+      return next(err);
+    }
+
+    // If both username/email and password are correct
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
+
+    // Set the token cookie
+    await setTokenCookie(res, user);
+
+    // Return the user data in response
+    return res.json({
+      user: safeUser
+    });
+  }
+);
+
 
   // Log out
 router.delete(
