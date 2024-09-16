@@ -12,6 +12,18 @@ const CREATE_ACTION = "accounts/createAction";
 const DELETE_ACTION = "accounts/deleteAction";
 const DELETE_CONTACT = "accounts/deleteContact";
 const UPDATE_CONTACT = "accounts/updateContact";
+const DELETE_ACCOUNT = "accounts/deleteAccount"
+const UPDATE_ACTION = "accounts/updateAction"
+
+const updateAction = (payload) => ({
+  type: UPDATE_ACTION,
+  payload
+})
+
+const deleteAccount = (accountId) => ({
+  type: DELETE_ACCOUNT,
+  accountId
+})
 
 const updateContact = (payload) => ({
   type: UPDATE_CONTACT,
@@ -73,6 +85,35 @@ const createAccount = (payload) => ({
   type: CREATE_ACCOUNT,
   payload
 });
+
+export const fetchUpdateAction = (actionId, action) => async (dispatch) => {
+  try {
+    const res = await csrfFetch(`/api/accounts/company/${actionId}/actions/${actionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(action),
+    });
+
+    if (res.ok) {
+      const newAction = await res.json();
+      console.log({newAction})
+      dispatch(updateAction(newAction));
+      return newAction;
+    }
+  } catch (err) {
+    console.error("Error updating action", err);
+  }
+}
+
+export const fetchDeleteAccount = (accountId) => async (dispatch) => {
+  const res = await csrfFetch(`/api/accounts/company/${accountId}`, {
+    method: "DELETE"
+  })
+  dispatch(deleteAccount(accountId))
+  return res
+}
 
 export const fetchUpdateContact = (contactId, contact) => async (dispatch) => {
   try {
@@ -374,6 +415,16 @@ const accountReducer = (state = initialState, action) => {
     return newState;
   }
   case UPDATE_CONTACT: {
+    const updatedState = { ...state };
+    updatedState[action.payload.id] = action.payload;
+    return updatedState;
+  }
+  case DELETE_ACCOUNT: {
+    const newState = { ...state };
+    delete newState[action.accountId];
+    return newState;
+  }
+  case UPDATE_ACTION: {
     const updatedState = { ...state };
     updatedState[action.payload.id] = action.payload;
     return updatedState;

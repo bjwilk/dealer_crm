@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, NavLink } from "react-router-dom";
+import { useParams, Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAccountProfile,
   fetchDeleteAction,
   fetchDeleteContact,
+  fetchDeleteAccount,
 } from "../../store/accounts";
 import { fetchDeleteOrder } from "../../store/orders";
 import "./AccountProfile.scss";
 
 export default function AccountProfile() {
-  const { id, contactId } = useParams();
+  const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({});
   const [isWeekFilter, setIsWeekFilter] = useState(true);
+  const [isAllFilter, setIsAllFilter] = useState(false);
   const user = useSelector((state) => state.session.user);
   const acctId = parseInt(id);
 
@@ -42,6 +45,16 @@ export default function AccountProfile() {
     usersActions = profile.actions.flatMap((action) => action);
     accountContacts = profile.contacts.flatMap((contact) => contact);
   }
+
+  const handleRemoveAccount = async (e, accountId) => {
+    e.preventDefault();
+    try {
+      await dispatch(fetchDeleteAccount(accountId));
+      navigate("/");
+    } catch (err) {
+      console.error("Failed to delete account:", err);
+    }
+  };
 
   //  Optimistic UI Update: After the deletion request, the local profile state is immediately updated to remove the deleted action, without waiting for a full refetch.
   //  This method does not require refetching the entire profile or actions list, making the UI more efficient and responsive.
@@ -72,15 +85,28 @@ export default function AccountProfile() {
           </NavLink>
           {accountContacts.length > 0 ? (
             accountContacts.map((contact) => (
-              <div className="dashboard__accounts" key={contact.id}>
+              <div
+                style={{
+                  border: "1px solid #ddd",
+                  padding: "10px",
+                  margin: "10px 0",
+                }}
+                className="dashboard__accounts"
+                key={contact.id}
+              >
                 <p>{contact.name}</p>
                 <p>{contact.position}</p>
                 <p>{contact.phone}</p>
                 <p>{contact.email}</p>
                 <NavLink to={`/account/${acctId}/update-contact/${contact.id}`}>
-                <button>Update</button>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
                 </NavLink>
-                <button onClick={(e) => handleRemoveContact(e, contact.id)}>
+                <button
+                  className="btn btn-delete btn-sm btn-icon-text"
+                  onClick={(e) => handleRemoveContact(e, contact.id)}
+                >
                   Remove Contact
                 </button>
               </div>
@@ -141,27 +167,104 @@ export default function AccountProfile() {
               Add Action
             </button>
           </NavLink>
-          <br></br>
-          <button onClick={() => setIsWeekFilter(true)}>Weekly</button>
-          <button onClick={() => setIsWeekFilter(false)}>Monthly</button>
-          {isWeekFilter ? (
-            weekActions.length > 0 ? (
-              weekActions.map((action) => (
-                <div key={action.id}>
+          <br />
+          <button
+            onClick={() => {
+              setIsWeekFilter(true);
+              setIsAllFilter(false);
+            }}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => {
+              setIsWeekFilter(false);
+              setIsAllFilter(false);
+            }}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => {
+              setIsWeekFilter(false);
+              setIsAllFilter(true);
+            }}
+          >
+            All
+          </button>
+          {isAllFilter ? (
+            usersActions.length > 0 ? (
+              usersActions.map((action) => (
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "10px",
+                    margin: "10px 0",
+                  }}
+                  key={action.id}
+                >
                   <p>
                     <strong>Action:</strong> {action.report}
                   </p>
-                  <br></br>
+                  <br />
                   <p>
                     <strong>Details:</strong> {action.details}
                   </p>
-                  <br></br>
+                  <br />
                   <span>
                     <strong>Due by:</strong> {action.reminder}
                   </span>
-                  <button onClick={(e) => handleRemoveAction(e, action.id)}>
+                  <div className="btn-group">
+                  <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
+                  <button
+                    className="btn btn-delete btn-sm btn-icon-text"
+                    onClick={(e) => handleRemoveAction(e, action.id)}
+                  >
                     Remove Action
-                  </button>{" "}
+                  </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No actions available.</p>
+            )
+          ) : isWeekFilter ? (
+            weekActions.length > 0 ? (
+              weekActions.map((action) => (
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "10px",
+                    margin: "10px 0",
+                  }}
+                  key={action.id}
+                >
+                  <p>
+                    <strong>Action:</strong> {action.report}
+                  </p>
+                  <br />
+                  <p>
+                    <strong>Details:</strong> {action.details}
+                  </p>
+                  <br />
+                  <span>
+                    <strong>Due by:</strong> {action.reminder}
+                  </span>
+                  <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
+                  <button
+                    className="btn btn-delete btn-sm btn-icon-text"
+                    onClick={(e) => handleRemoveAction(e, action.id)}
+                  >
+                    Remove Action
+                  </button>
                 </div>
               ))
             ) : (
@@ -169,21 +272,36 @@ export default function AccountProfile() {
             )
           ) : monthActions.length > 0 ? (
             monthActions.map((action) => (
-              <div key={action.id}>
+              <div
+                style={{
+                  border: "1px solid #ddd",
+                  padding: "10px",
+                  margin: "10px 0",
+                }}
+                key={action.id}
+              >
                 <p>
                   <strong>Action:</strong> {action.report}
                 </p>
-                <br></br>
+                <br />
                 <p>
                   <strong>Details:</strong> {action.details}
                 </p>
-                <br></br>
+                <br />
                 <span>
                   <strong>Due by:</strong> {action.reminder}
                 </span>
-                <button onClick={(e) => handleRemoveAction(e, action.id)}>
+                <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
+                <button
+                  className="btn btn-delete btn-sm btn-icon-text"
+                  onClick={(e) => handleRemoveAction(e, action.id)}
+                >
                   Remove Action
-                </button>{" "}
+                </button>
               </div>
             ))
           ) : (
@@ -228,7 +346,10 @@ export default function AccountProfile() {
               <NavLink to={`/account/${acctId}/update-order/${order.id}`}>
                 <button>Update</button>
               </NavLink>
-              <button onClick={(e) => handleRemoveOrder(e, order.id)}>
+              <button
+                className="btn btn-delete btn-sm btn-icon-text"
+                onClick={(e) => handleRemoveOrder(e, order.id)}
+              >
                 Delete
               </button>
             </div>
@@ -238,27 +359,51 @@ export default function AccountProfile() {
         )}
       </div>
       <div className="dashboard__profile">
-        <div>Account Profile</div>
-        <NavLink to={`/account/${acctId}/edit`}>
-          <button className="btn btn-primary btn-sm btn-icon-text">
-            Update Profile
-          </button>
-        </NavLink>
+        <div className="profile-header">
+          <h3>Account Profile</h3>
+          <div className="profile-buttons">
+            <NavLink to={`/account/${acctId}/edit`}>
+              <button className="btn btn-primary btn-sm btn-icon-text">
+                Update Profile
+              </button>
+            </NavLink>
+            <button
+              className="btn btn-delete btn-sm btn-icon-text"
+              onClick={(e) => handleRemoveAccount(e, profile.id)}
+            >
+              Delete Account
+            </button>
+          </div>
+        </div>
         {user && profile ? (
-          <>
+          <div className="profile-info">
             <h2>{profile.companyName}</h2>
-            <p>Vocation: {profile.businessType}</p>
-            <p>Equipment: {profile.equipmentType}</p>
-            <p>Fleet Size: {profile.fleetSize}</p>
-            <p>Looking For: {profile.lookingFor}</p>
-            <p>Phone #: {profile.phoneNumber}</p>
-            <p>Email: {profile.email}</p>
-            <span>{profile.address}</span>
-            <br></br>
+            <p>
+              <strong>Vocation:</strong> {profile.businessType}
+            </p>
+            <p>
+              <strong>Equipment:</strong> {profile.equipmentType}
+            </p>
+            <p>
+              <strong>Fleet Size:</strong> {profile.fleetSize}
+            </p>
+            <p>
+              <strong>Looking For:</strong> {profile.lookingFor}
+            </p>
+            <p>
+              <strong>Phone #:</strong> {profile.phoneNumber}
+            </p>
+            <p>
+              <strong>Email:</strong> {profile.email}
+            </p>
             <span>
-              {profile.city}, {profile.zipCode}
+              <strong>Address:</strong> {profile.address}
             </span>
-          </>
+            <span>
+              <strong>City:</strong> {profile.city}, <strong>ZIP Code:</strong>{" "}
+              {profile.zipCode}
+            </span>
+          </div>
         ) : (
           <div>Must be logged in</div>
         )}
@@ -275,7 +420,7 @@ export default function AccountProfile() {
           {Object.values(profile).length > 0 ? (
             <Contacts />
           ) : (
-            <p>Loading actions...</p>
+            <p>Loading contacts...</p>
           )}
         </div>
       </div>

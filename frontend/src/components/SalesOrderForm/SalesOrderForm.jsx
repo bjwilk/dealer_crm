@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { OrderContext } from "../../context/OrderContext";
 import "./SalesOrderForm.scss";
 import { useSelector, useDispatch } from "react-redux";
@@ -31,7 +31,6 @@ const SalesOrderForm = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-      console.log({ data });
       setCompanyInfo(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -46,7 +45,7 @@ const SalesOrderForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({})
+    setErrors({});
 
     const newErrors = {};
     if (!orderDetails.vin) newErrors.vin = "VIN is required";
@@ -55,8 +54,8 @@ const SalesOrderForm = () => {
     if (!orderDetails.price) newErrors.price = "Price is required";
     if (!orderDetails.tax) newErrors.tax = "Tax is required";
     if (!orderDetails.license) newErrors.license = "License Fee is required";
-    if (!orderDetails.condition) newErrors.condition = "New or Used is required";
-
+    if (!orderDetails.condition)
+      newErrors.condition = "New or Used is required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -98,7 +97,7 @@ const SalesOrderForm = () => {
             value={orderDetails.vin}
             onChange={handleChange}
           />
-           {errors.vin && <p className="error-message">{errors.vin}</p>}
+          {errors.vin && <p className="error-message">{errors.vin}</p>}
           <input
             type="text"
             name="model"
@@ -106,7 +105,7 @@ const SalesOrderForm = () => {
             value={orderDetails.model}
             onChange={handleChange}
           />
-           {errors.model && <p className="error-message">{errors.model}</p>}
+          {errors.model && <p className="error-message">{errors.model}</p>}
           <input
             type="text"
             name="year"
@@ -114,7 +113,7 @@ const SalesOrderForm = () => {
             value={orderDetails.year}
             onChange={handleChange}
           />
-           {errors.year && <p className="error-message">{errors.year}</p>}
+          {errors.year && <p className="error-message">{errors.year}</p>}
           <div className="condition-box">
             <label>
               <input
@@ -142,7 +141,9 @@ const SalesOrderForm = () => {
               />
               Used
             </label>
-            {errors.condition && <p className="error-message">{errors.condition}</p>}
+            {errors.condition && (
+              <p className="error-message">{errors.condition}</p>
+            )}
           </div>
           <label>Price</label>
           <input
@@ -152,7 +153,7 @@ const SalesOrderForm = () => {
             value={orderDetails.price}
             onChange={handleChange}
           />
-           {errors.price && <p className="error-message">{errors.price}</p>}
+          {errors.price && <p className="error-message">{errors.price}</p>}
           <label>Body & Equipment</label>
           <input
             type="number"
@@ -177,7 +178,7 @@ const SalesOrderForm = () => {
             value={orderDetails.tax}
             onChange={handleChange}
           />
-           {errors.tax && <p className="error-message">{errors.tax}</p>}
+          {errors.tax && <p className="error-message">{errors.tax}</p>}
           <label>License Fee</label>
           <input
             type="text"
@@ -186,10 +187,13 @@ const SalesOrderForm = () => {
             value={orderDetails.license}
             onChange={handleChange}
           />
-           {errors.license && <p className="error-message">{errors.license}</p>}
+          {errors.license && <p className="error-message">{errors.license}</p>}
           <button className="create-button" type="submit">
             Create Order
           </button>
+          <NavLink to={`/account/${acctId}`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
+          </NavLink>
         </form>
       </header>
     </div>

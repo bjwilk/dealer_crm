@@ -45,7 +45,6 @@ const CreateAction = () => {
       ...contactInfo,
       accountId: acctId,
     };
-    console.log("Reminder:", contactInfo.reminder);
 
     try {
       await dispatch(fetchCreateAction(acctId, payload));
