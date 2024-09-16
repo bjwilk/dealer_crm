@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUpdateContact } from "../../store/accounts";
+import { fetchUpdateAction } from "../../store/accounts";
 import { csrfFetch } from "../../store/csrf";
 
-const UpdateContact = () => {
-  const { id, contactId } = useParams();
+const UpdateAction  = () => {
+  const { id, actionId } = useParams();
   const dispatch = useDispatch();
   const [contactInfo, setContactInfo] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    position: "",
+    report: "",
+    details: "",
+    reminder: "",
   });
   const [errors, setErrors] = useState({});
 
   const user = useSelector((state) => state.session.user);
   const navigate = useNavigate();
+
+  const acctId = parseInt(id);
+
 
   const fetchAccounts = async () => {
     try {
@@ -28,9 +30,9 @@ const UpdateContact = () => {
       }
       const data = await response.json();
       setContactInfo(data);
-      const contact = data.contacts.find((contact) => contact.id === parseInt(contactId));
-      if (contact) {
-        setContactInfo(contact);
+      const action = data.actions.find((action) => action.id === parseInt(actionId));
+      if (action) {
+        setContactInfo(action);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -41,17 +43,18 @@ const UpdateContact = () => {
     if (user) {
       fetchAccounts();
     }
-  }, [user, id, contactId]);
+  }, [user, id, actionId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
 
     const newErrors = {};
-    if (!contactInfo.name) newErrors.name = "Name is required";
-    if (!contactInfo.phone) newErrors.phone = "Phone is required";
-    if (!contactInfo.email) newErrors.email = "Email is required";
-    if (!contactInfo.position) newErrors.position = "Position is required";
+    if (!contactInfo.details)
+      newErrors.details = "Action title name is required";
+    if (!contactInfo.report) newErrors.report = "Action report is required";
+    if (!contactInfo.reminder)
+      newErrors.reminder = "Complete by date is required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -63,14 +66,18 @@ const UpdateContact = () => {
       ...contactInfo,
     };
 
-    let updatedContact;
-    try {
-       updatedContact = await dispatch(fetchUpdateContact(contactId, payload));
-      navigate(`/account/${id}`);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
+      try {
+        await dispatch(fetchUpdateAction(acctId, payload));
+        navigate(`/account/${acctId}`);
+      } catch (err) {
+        const data = await err.json();
+        if (data?.errors) {
+          setErrors(data.errors);
+        }
+        console.error(errors.data.errors);
+      }
+    };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,56 +90,46 @@ const UpdateContact = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Update Contact</h1>
+        <h1>Update Action</h1>
         <form className="company" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="name"
-            placeholder="Name"
-            value={contactInfo.name}
+            name="report"
+            placeholder="Title"
+            value={contactInfo.report}
             onChange={handleChange}
           />
-          {errors.name && <p className="error-message">{errors.name}</p>}
+          {errors.details && <p className="error-message">{errors.details}</p>}
 
           <input
             type="text"
-            name="position"
-            placeholder="Position"
-            value={contactInfo.position}
+            name="details"
+            placeholder="Report"
+            value={contactInfo.details}
             onChange={handleChange}
           />
-          {errors.position && (
-            <p className="error-message">{errors.position}</p>
+          {errors.report && <p className="error-message">{errors.report}</p>}
+          <label>Complete by</label>
+          {errors.reminder && (
+            <p className="error-message">{errors.reminder}</p>
           )}
-
           <input
-            type="text"
-            name="phone"
-            placeholder="Phone"
-            value={contactInfo.phone}
+            type="date"
+            name="reminder"
+            placeholder="Date Due"
+            value={contactInfo.reminder}
             onChange={handleChange}
           />
-          {errors.phone && <p className="error-message">{errors.phone}</p>}
-
-          <input
-            type="text"
-            name="email"
-            placeholder="Email"
-            value={contactInfo.email}
-            onChange={handleChange}
-          />
-          {errors.email && <p className="error-message">{errors.email}</p>}
-
           <button className="create-button" type="submit">
-            Create Contact
+            Create Action
           </button>
-          <NavLink to={`/account/${id}`}>
+          <NavLink to={`/account/${acctId}`}>
             <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
           </NavLink>
+
         </form>
       </header>
     </div>
-  );
-};
+  );};
 
-export default UpdateContact;
+export default UpdateAction;

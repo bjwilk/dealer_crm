@@ -189,6 +189,30 @@ router.post("/company/:id/actions", requireAuth, async (req, res, next) => {
   }
 });
 
+// Update Action
+router.put("/company/:actionId/actions/:actionId", requireAuth, async (req, res, next) => {
+  const actionId = req.params.actionId;
+  const updatedActionData = req.body; // Ensure that req.body only contains fields you want to update
+
+  try {
+    const rowsUpdated = await Action.update(updatedActionData, {
+      where: { id: actionId },
+    });
+
+    if (rowsUpdated[0] === 0) {
+      res.status(404).json({ error: "Action not found" });
+      return;
+    }
+
+    const updatedAction = await Action.findByPk(actionId); // Fetch the updated Contact separately
+
+    res.status(200).json(updatedAction);
+  } catch (error) {
+    console.error("Error updating Action:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Create Account Contact
 router.post("/company/:id/contacts", requireAuth, async (req, res, next) => {
   const { id } = req.params;

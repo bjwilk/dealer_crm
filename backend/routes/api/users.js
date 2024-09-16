@@ -36,6 +36,20 @@ const validateSignup = [
     return res.json(users)
   } )
 
+// Check if email exists
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ where: { email } });
+  return res.json({ exists: !!user });
+});
+
+// Check if username exists
+router.post('/check-username', async (req, res) => {
+  const { username } = req.body;
+  const user = await User.findOne({ where: { username } });
+  return res.json({ exists: !!user });
+});
+
 // Sign up
 router.post(
     '/',

@@ -17,6 +17,7 @@ import CreateContact from "./components/CreateContact/CreateContact";
 import CreateAction from "./components/CreateAction/CreateAction";
 import UpdateOrder from "./components/UpdateOrder/UpdateOrder";
 import UpdateContact from "./components/UpdateContact/UpdateContact";
+import UpdateAction from "./components/UpdateAction/UpdateAction";
 
 
 function Layout() {
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
       {
         path: "/account/:id/update-contact/:contactId",
         element: <UpdateContact />
+      },
+      {
+        path: "/account/:id/update-action/:actionId",
+        element: <UpdateAction />
       }
     ],
   },

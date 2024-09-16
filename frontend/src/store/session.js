@@ -30,20 +30,40 @@ export const login = (user) => async (dispatch) => {
   return response;
 };
 
+
+export const checkEmailExists = (email) => async () => {
+  const response = await csrfFetch("/api/users/check-email", {
+    method: "POST",
+    body: JSON.stringify({ email })
+  });
+  const data = await response.json();
+  return data.exists;
+};
+
+export const checkUsernameExists = (username) => async () => {
+  const response = await csrfFetch("/api/users/check-username", {
+    method: "POST",
+    body: JSON.stringify({ username })
+  });
+  const data = await response.json();
+  return data.exists;
+};
+
+
 export const signup = (user) => async (dispatch) => {
-    const { username, email, password } = user;
-    const response = await csrfFetch("/api/users", {
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        email,
-        password
-      })
-    });
-    const data = await response.json();
-    dispatch(setUser(data.user));
-    return response;
-  };
+  const { username, email, password } = user;
+  const response = await csrfFetch("/api/users", {
+    method: "POST",
+    body: JSON.stringify({
+      username,
+      email,
+      password
+    })
+  });
+  const data = await response.json();
+  dispatch(setUser(data.user));
+  return response;
+};
 
   export const logout = () => async (dispatch) => {
     const response = await csrfFetch('/api/session', {

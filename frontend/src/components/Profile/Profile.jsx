@@ -1,12 +1,18 @@
 import "./Profile.scss";
-
+import { useNavigate } from "react-router-dom";
 const Profile = (props) => {
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    navigate("/");
+  };
+
   return (
     <div className="container-fluid">
       <div className="container">
         <div className="d-flex justify-content-between align-items-lg-center py-3 flex-column flex-lg-row">
           <div className="hstack gap-3">
-            <button className="btn btn-light btn-sm btn-icon-text">
+            <button onClick={handleCancel} className="btn btn-light btn-sm btn-icon-text">
               <span className="text">Cancel</span>
             </button>
             <button
@@ -323,7 +329,7 @@ const Profile = (props) => {
                         className="select2 form-control select2-hidden-accessible"
                         data-select2-placeholder="Select state"
                         data-select2-id="select2-data-4-680y"
-                        tabindex="-1"
+                        tabIndex="-1"
                         aria-hidden="true"
                       >
                         <option data-select2-id="select2-data-6-cshs"></option>
@@ -390,7 +396,7 @@ const Profile = (props) => {
                             role="combobox"
                             aria-haspopup="true"
                             aria-expanded="false"
-                            tabindex="0"
+                            tabIndex="0"
                             aria-disabled="false"
                             aria-labelledby="select2-2fn7-container"
                             aria-controls="select2-2fn7-container"
@@ -434,7 +440,7 @@ const Profile = (props) => {
                         className="select2 form-control select2-hidden-accessible"
                         data-select2-placeholder="Select city"
                         data-select2-id="select2-data-7-809c"
-                        tabindex="-1"
+                        tabIndex="-1"
                         aria-hidden="true"
                         type="text"
                       />

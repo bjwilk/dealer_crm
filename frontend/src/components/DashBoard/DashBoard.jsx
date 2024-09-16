@@ -12,6 +12,8 @@ export default function DashBoard() {
   const user = useSelector((state) => state.session.user);
   const accounts = useSelector((state) => state.accounts);
   const [isWeekFilter, setIsWeekFilter] = useState(true);
+  const [isAllFilter, setIsAllFilter] = useState(false);
+
 
   const usersActions = Object.values(accounts).flatMap(
     (account) => account.actions || []
@@ -36,7 +38,6 @@ export default function DashBoard() {
   }
 
   function Actions() {
-
     const filterWeekActions = () => {
       const currentTime = new Date();
       const oneWeekFromNow = new Date(currentTime);
@@ -60,39 +61,124 @@ export default function DashBoard() {
     const weekActions = filterWeekActions();
     const monthActions = filterMonthActions();
 
+
     return (
       <div className="account-filter">
         <div className="dashboard__actions">
           <h4>Actions</h4>
-          <button onClick={() => setIsWeekFilter(true)}>Weekly</button>
-          <button onClick={() => setIsWeekFilter(false)}>Monthly</button>
-          {isWeekFilter ? (
+          <br />
+          <button
+            onClick={() => {
+              setIsWeekFilter(true);
+              setIsAllFilter(false);
+            }}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => {
+              setIsWeekFilter(false);
+              setIsAllFilter(false);
+            }}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => {
+              setIsWeekFilter(false);
+              setIsAllFilter(true);
+            }}
+          >
+            All
+          </button>
+          {isAllFilter ? (
+            usersActions.length > 0 ? (
+              usersActions.map((action, index) => (
+                <ul key={action.id || index}>
+                <NavLink to={`/account/${action.accountId}`}>
+                <li
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "10px",
+                    margin: "10px 0",
+                  }}
+                  
+                >
+                  <p>
+                    <strong>Action:</strong> {action.report}
+                  </p>
+                  <br />
+                  <p>
+                    <strong>Details:</strong> {action.details}
+                  </p>
+                  <br />
+                  <span>
+                    <strong>Due by:</strong> {action.reminder}
+                  </span>
+                </li>
+                </NavLink>
+                </ul>
+              ))
+            ) : (
+              <p>No actions available.</p>
+            )
+          ) : isWeekFilter ? (
             weekActions.length > 0 ? (
-              weekActions.map((action) => (
-                <div key={action.id}>
-                  <NavLink to={`/account/${action.accountId}`}>
-                    <p>
-                      <strong>Action:</strong> {action.report}
-                      <br></br>
-                      <span> <strong>Due by:</strong> {action.reminder}</span>
-                    </p>
-                  </NavLink>
-                </div>
+              weekActions.map((action, index) => (
+                <ul key={action.id || index}>
+                <NavLink to={`/account/${action.accountId}`}>
+                <li
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "10px",
+                    margin: "10px 0",
+                  }}
+                  
+                >
+                  <p>
+                    <strong>Action:</strong> {action.report}
+                  </p>
+                  <br />
+                  <p>
+                    <strong>Details:</strong> {action.details}
+                  </p>
+                  <br />
+                  <span>
+                    <strong>Due by:</strong> {action.reminder}
+                  </span>
+                </li>
+                </NavLink>
+                </ul>
               ))
             ) : (
               <p>No actions available within the next week.</p>
             )
           ) : monthActions.length > 0 ? (
-            monthActions.map((action) => (
-              <div key={action.id}>
+            monthActions.map((action, index) => (
+              <ul key={action.id || index}>
               <NavLink to={`/account/${action.accountId}`}>
+              <li
+                style={{
+                  border: "1px solid #ddd",
+                  padding: "10px",
+                  margin: "10px 0",
+                }}
+                
+              >
                 <p>
                   <strong>Action:</strong> {action.report}
-                  <br></br>
-                  <span> <strong>Due by:</strong> {action.reminder}</span>
                 </p>
+                <br />
+                <p>
+                  <strong>Details:</strong> {action.details}
+                </p>
+                <br />
+                <span>
+                  <strong>Due by:</strong> {action.reminder}
+                </span>
+              </li>
               </NavLink>
-            </div>
+              </ul>
         ))
           ) : (
             <p>No actions available within the next month.</p>
@@ -101,19 +187,23 @@ export default function DashBoard() {
       </div>
     );
   }
-
   return (
     <div className="dashboard">
       <div className="dashboard__accounts">
         <h4>Accounts</h4>
         {Object.values(accounts).length > 0 ? (
-          Object.values(accounts).map((account) => (
-            <div key={account.id}>
-              <NavLink to={`/account/${account.id}`}>
-                <p>Company Name: {account.companyName}</p>
-              </NavLink>
-            </div>
-          ))
+          <ul>
+            {Object.values(accounts).map((account, index) => {
+              return (
+                <li key={account.id || index}>
+                  {/* fixed key prop error */}
+                  <NavLink to={`/account/${account.id}`}>
+                    <p>Company Name: {account.companyName}</p>
+                  </NavLink>
+                </li>
+              );
+            })}
+          </ul>
         ) : (
           <p>No accounts available</p>
         )}
