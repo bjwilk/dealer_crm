@@ -26,7 +26,7 @@ function Login() {
 
     try {
       await dispatch(sessionActions.login({ credential, password }));
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       const data = await err.json();
       if (data?.errors) {
@@ -122,3 +122,4 @@ function Login() {
 }
 
 export default Login;
+

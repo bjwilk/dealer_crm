@@ -20,7 +20,7 @@ export default function Header() {
   return (
     <div id="navigation" className="navigation">
       {user && (
-        <Link to={"/"}>
+        <Link to={"/dashboard"}>
           <button>DashBoard</button>
         </Link>
       )}
