@@ -1,12 +1,18 @@
 import "./Profile.scss";
-
+import { useNavigate } from "react-router-dom";
 const Profile = (props) => {
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    navigate("/");
+  };
+
   return (
     <div className="container-fluid">
       <div className="container">
         <div className="d-flex justify-content-between align-items-lg-center py-3 flex-column flex-lg-row">
           <div className="hstack gap-3">
-            <button className="btn btn-light btn-sm btn-icon-text">
+            <button onClick={handleCancel} className="btn btn-light btn-sm btn-icon-text">
               <span className="text">Cancel</span>
             </button>
             <button

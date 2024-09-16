@@ -11,7 +11,7 @@ import { fetchDeleteOrder } from "../../store/orders";
 import "./AccountProfile.scss";
 
 export default function AccountProfile() {
-  const { id, contactId } = useParams();
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [profile, setProfile] = useState({});
@@ -214,12 +214,19 @@ export default function AccountProfile() {
                   <span>
                     <strong>Due by:</strong> {action.reminder}
                   </span>
+                  <div className="btn-group">
+                  <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
                   <button
                     className="btn btn-delete btn-sm btn-icon-text"
                     onClick={(e) => handleRemoveAction(e, action.id)}
                   >
                     Remove Action
                   </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -228,7 +235,14 @@ export default function AccountProfile() {
           ) : isWeekFilter ? (
             weekActions.length > 0 ? (
               weekActions.map((action) => (
-                <div key={action.id}>
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "10px",
+                    margin: "10px 0",
+                  }}
+                  key={action.id}
+                >
                   <p>
                     <strong>Action:</strong> {action.report}
                   </p>
@@ -240,6 +254,11 @@ export default function AccountProfile() {
                   <span>
                     <strong>Due by:</strong> {action.reminder}
                   </span>
+                  <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
                   <button
                     className="btn btn-delete btn-sm btn-icon-text"
                     onClick={(e) => handleRemoveAction(e, action.id)}
@@ -253,7 +272,14 @@ export default function AccountProfile() {
             )
           ) : monthActions.length > 0 ? (
             monthActions.map((action) => (
-              <div key={action.id}>
+              <div
+                style={{
+                  border: "1px solid #ddd",
+                  padding: "10px",
+                  margin: "10px 0",
+                }}
+                key={action.id}
+              >
                 <p>
                   <strong>Action:</strong> {action.report}
                 </p>
@@ -265,6 +291,11 @@ export default function AccountProfile() {
                 <span>
                   <strong>Due by:</strong> {action.reminder}
                 </span>
+                <NavLink to={`/account/${acctId}/update-action/${action.id}`}>
+                  <button className="btn btn-primary btn-sm btn-icon-text">
+                    Update
+                  </button>
+                </NavLink>
                 <button
                   className="btn btn-delete btn-sm btn-icon-text"
                   onClick={(e) => handleRemoveAction(e, action.id)}
@@ -329,7 +360,7 @@ export default function AccountProfile() {
       </div>
       <div className="dashboard__profile">
         <div className="profile-header">
-          <div>Account Profile</div>
+          <h3>Account Profile</h3>
           <div className="profile-buttons">
             <NavLink to={`/account/${acctId}/edit`}>
               <button className="btn btn-primary btn-sm btn-icon-text">

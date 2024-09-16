@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { fetchCreateAction } from "../../store/accounts";
-import "./CreateAction.scss";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUpdateAction } from "../../store/accounts";
+import { csrfFetch } from "../../store/csrf";
 
-const CreateAction = () => {
-  const { id } = useParams();
+const UpdateAction  = () => {
+  const { id, actionId } = useParams();
   const dispatch = useDispatch();
   const [contactInfo, setContactInfo] = useState({
     report: "",
@@ -13,17 +13,37 @@ const CreateAction = () => {
     reminder: "",
   });
   const [errors, setErrors] = useState({});
+
+  const user = useSelector((state) => state.session.user);
   const navigate = useNavigate();
 
   const acctId = parseInt(id);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setContactInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await csrfFetch(`/api/accounts/company/${id}`, {
+        method: "GET",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      setContactInfo(data);
+      const action = data.actions.find((action) => action.id === parseInt(actionId));
+      if (action) {
+        setContactInfo(action);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchAccounts();
+    }
+  }, [user, id, actionId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,26 +62,35 @@ const CreateAction = () => {
     }
 
     const payload = {
+      accountId: parseInt(id),
       ...contactInfo,
-      accountId: acctId,
     };
 
-    try {
-      await dispatch(fetchCreateAction(acctId, payload));
-      navigate(`/account/${acctId}`);
-    } catch (err) {
-      const data = await err.json();
-      if (data?.errors) {
-        setErrors(data.errors);
+
+      try {
+        await dispatch(fetchUpdateAction(acctId, payload));
+        navigate(`/account/${acctId}`);
+      } catch (err) {
+        const data = await err.json();
+        if (data?.errors) {
+          setErrors(data.errors);
+        }
+        console.error(errors.data.errors);
       }
-      console.error(errors.data.errors);
-    }
+    };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setContactInfo({
+      ...contactInfo,
+      [name]: value,
+    });
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Create Action</h1>
+        <h1>Update Action</h1>
         <form className="company" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -97,7 +126,6 @@ const CreateAction = () => {
         </form>
       </header>
     </div>
-  );
-};
+  );};
 
-export default CreateAction;
+export default UpdateAction;
