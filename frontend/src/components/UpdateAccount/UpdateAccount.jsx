@@ -42,8 +42,10 @@ const UpdateAccount = () => {
   }, [dispatch, acctId, user]);
 
   const handleChange = (e) => {
-    console.log(addressInfo, e.target.name);
     switch (e.target.name) {
+      case "notes":
+        setAddressInfo((pre) => ({ ...pre, notes: e.target.value }));
+        break;
       case "firstName":
         setAddressInfo((pre) => ({ ...pre, firstName: e.target.value }));
         break;
@@ -184,6 +186,7 @@ const UpdateAccount = () => {
         city={addressInfo.city}
         state={addressInfo.state}
         zipCode={addressInfo.zipCode}
+        notes={addressInfo.notes}
         errors={errors}
       />
     </>

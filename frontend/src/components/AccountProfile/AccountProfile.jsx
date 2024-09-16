@@ -403,6 +403,9 @@ export default function AccountProfile() {
               <strong>City:</strong> {profile.city}, <strong>ZIP Code:</strong>{" "}
               {profile.zipCode}
             </span>
+            <span>
+              <strong>Notes:</strong> {profile.notes}
+            </span>
           </div>
         ) : (
           <div>Must be logged in</div>

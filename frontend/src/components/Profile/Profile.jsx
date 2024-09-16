@@ -469,7 +469,7 @@ const Profile = (props) => {
             <div className="card-body">
               <div className="card-body">
                 <h3 className="h6">Notes</h3>
-                <textarea className="form-control" rows="3"></textarea>
+                <textarea className="form-control" rows="3" name="notes" value={props.notes} onChange={props.handleChange}></textarea>
               </div>
             </div>
           </div>

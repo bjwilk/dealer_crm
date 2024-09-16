@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchCreateAction } from "../../store/accounts";
 import "./CreateAction.scss";
@@ -94,6 +94,11 @@ const CreateAction = () => {
           <button className="create-button" type="submit">
             Create Action
           </button>
+          <NavLink to={`/account/${acctId}`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
+          </NavLink>
+
+
         </form>
       </header>
     </div>

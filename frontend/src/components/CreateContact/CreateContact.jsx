@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCreateContact } from "../../store/accounts";
 
@@ -106,6 +106,10 @@ const CreateContact = () => {
           <button className="create-button" type="submit">
             Create Contact
           </button>
+          <NavLink to={`/account/${id}`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
+          </NavLink>
+
         </form>
       </header>
     </div>
