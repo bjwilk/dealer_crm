@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createBrowserRouter, RouterProvider, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
 import * as sessionActions from "./store/session";
-// import { Modal } from "./context/Modal";
 import Header from "./components/Navigation/Navigation";
 import DashBoard from "./components/DashBoard/DashBoard";
 import CreateAccount from "./components/CreateAccount/CreateAccount";
 import Login from "./components/Login/Login";
 import Signup from "./components/SignUp/Signup";
-// import FilterAccounts from "./components/FilterAccounts/FilterAccounts";
 import AccountProfile from "./components/AccountProfile/AccountProfile";
 import SalesOrderForm from "./components/SalesOrderForm/SalesOrderForm";
 import SalesOrder from "./components/SalesOrder/SalesOrder";
@@ -19,12 +17,10 @@ import UpdateOrder from "./components/UpdateOrder/UpdateOrder";
 import UpdateContact from "./components/UpdateContact/UpdateContact";
 import UpdateAction from "./components/UpdateAction/UpdateAction";
 
-
-
 function Layout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // Get current route
+  const location = useLocation();
   const user = useSelector((state) => state.session.user);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,16 +31,11 @@ function Layout() {
   }, [dispatch]);
 
   useEffect(() => {
-    // Allow access to login and signup pages even if not logged in
     const publicRoutes = ["/login", "/signup"]; // List of routes where users don't need to be logged in
-
-    // If user is not logged in and trying to access a private page, redirect to login
     if (!user && !isLoading && !publicRoutes.includes(location.pathname)) {
       navigate("/login");
     }
   }, [user, navigate, location.pathname, isLoading]);
-
-  // if (isLoading) return <div>Loading...</div>;
 
   return (
     <>
@@ -60,7 +51,13 @@ function Layout() {
   );
 }
 
+function ProtectedRoute({ element }) {
+  const user = useSelector((state) => state.session.user);
 
+  // If the user is logged in, allow them to access the element
+  // If not, redirect them to the login page
+  return user ? element : <Navigate to="/login" />;
+}
 
 const router = createBrowserRouter([
   {
@@ -68,14 +65,22 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <DashBoard />,
+        element: (
+          <ProtectedRoute
+            element={<DashBoard />} // Redirects to the dashboard if logged in, otherwise to login
+          />
+        ),
       },
       {
-        path: "/CreateAccount",
-        element: <CreateAccount />,
+        path: "/dashboard",
+        element: <ProtectedRoute element={<DashBoard />} />,
       },
       {
-        path: "/Login",
+        path: "/createAccount",
+        element: <ProtectedRoute element={<CreateAccount />} />,
+      },
+      {
+        path: "/login",
         element: <Login />,
       },
       {
@@ -84,49 +89,46 @@ const router = createBrowserRouter([
       },
       {
         path: "/account/:id",
-        element: <AccountProfile />,
+        element: <ProtectedRoute element={<AccountProfile />} />,
       },
       {
         path: "/account/:id/edit",
-        element: <UpdateAccount />
+        element: <ProtectedRoute element={<UpdateAccount />} />,
       },
       {
         path: "/create-order/:id",
-        element: <SalesOrderForm />
+        element: <ProtectedRoute element={<SalesOrderForm />} />,
       },
       {
         path: "/sales-order/:orderId",
-        element: <SalesOrder />
+        element: <ProtectedRoute element={<SalesOrder />} />,
       },
       {
         path: "/account/:id/contact",
-        element: <CreateContact />
+        element: <ProtectedRoute element={<CreateContact />} />,
       },
       {
         path: "/account/:id/action",
-        element: <CreateAction />
+        element: <ProtectedRoute element={<CreateAction />} />,
       },
       {
         path: "/account/:id/update-order/:orderId",
-        element: <UpdateOrder />
+        element: <ProtectedRoute element={<UpdateOrder />} />,
       },
       {
         path: "/account/:id/update-contact/:contactId",
-        element: <UpdateContact />
+        element: <ProtectedRoute element={<UpdateContact />} />,
       },
       {
         path: "/account/:id/update-action/:actionId",
-        element: <UpdateAction />
-      }
+        element: <ProtectedRoute element={<UpdateAction />} />,
+      },
     ],
   },
 ]);
 
 function App() {
-
-
   return <RouterProvider router={router} />;
 }
 
 export default App;
-
