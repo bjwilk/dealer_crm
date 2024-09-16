@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUpdateOrder, fetchAccountOrders } from "../../store/orders";
+import { fetchUpdateOrder } from "../../store/orders";
 import { csrfFetch } from "../../store/csrf";
 import "./UpdateOrder.scss";
 
 const UpdateOrder = () => {
   const { id, orderId } = useParams();
+  const acctId = parseInt(id);
   const dispatch = useDispatch();
   const [companyInfo, setCompanyInfo] = useState({
     companyName: "",
@@ -211,6 +212,9 @@ const UpdateOrder = () => {
           <button className="create-button" type="submit">
             Update Order
           </button>
+          <NavLink to={`/account/${acctId}`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
+          </NavLink>
         </form>
       </header>
     </div>

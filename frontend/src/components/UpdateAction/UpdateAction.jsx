@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUpdateAction } from "../../store/accounts";
 import { csrfFetch } from "../../store/csrf";
@@ -123,6 +123,10 @@ const UpdateAction  = () => {
           <button className="create-button" type="submit">
             Create Action
           </button>
+          <NavLink to={`/account/${acctId}`}>
+            <button className="btn btn-primary btn-sm btn-icon-text">Cancel</button>
+          </NavLink>
+
         </form>
       </header>
     </div>
