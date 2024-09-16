@@ -94,15 +94,15 @@ export default function DashBoard() {
           {isAllFilter ? (
             usersActions.length > 0 ? (
               usersActions.map((action, index) => (
-                <>
+                <ul key={action.id || index}>
                 <NavLink to={`/account/${action.accountId}`}>
-                <div
+                <li
                   style={{
                     border: "1px solid #ddd",
                     padding: "10px",
                     margin: "10px 0",
                   }}
-                  key={action.id || index}
+                  
                 >
                   <p>
                     <strong>Action:</strong> {action.report}
@@ -115,9 +115,9 @@ export default function DashBoard() {
                   <span>
                     <strong>Due by:</strong> {action.reminder}
                   </span>
-                </div>
+                </li>
                 </NavLink>
-                </>
+                </ul>
               ))
             ) : (
               <p>No actions available.</p>
@@ -125,16 +125,15 @@ export default function DashBoard() {
           ) : isWeekFilter ? (
             weekActions.length > 0 ? (
               weekActions.map((action, index) => (
-                <>
+                <ul key={action.id || index}>
                 <NavLink to={`/account/${action.accountId}`}>
-
-                <div
+                <li
                   style={{
                     border: "1px solid #ddd",
                     padding: "10px",
                     margin: "10px 0",
                   }}
-                  key={action.id || index}
+                  
                 >
                   <p>
                     <strong>Action:</strong> {action.report}
@@ -147,25 +146,24 @@ export default function DashBoard() {
                   <span>
                     <strong>Due by:</strong> {action.reminder}
                   </span>
-                </div>
+                </li>
                 </NavLink>
-                </>
+                </ul>
               ))
             ) : (
               <p>No actions available within the next week.</p>
             )
           ) : monthActions.length > 0 ? (
             monthActions.map((action, index) => (
-              <>
+              <ul key={action.id || index}>
               <NavLink to={`/account/${action.accountId}`}>
-
-              <div
+              <li
                 style={{
                   border: "1px solid #ddd",
                   padding: "10px",
                   margin: "10px 0",
                 }}
-                key={action.id || index}
+                
               >
                 <p>
                   <strong>Action:</strong> {action.report}
@@ -178,10 +176,10 @@ export default function DashBoard() {
                 <span>
                   <strong>Due by:</strong> {action.reminder}
                 </span>
-              </div>
+              </li>
               </NavLink>
-              </>
-          ))
+              </ul>
+        ))
           ) : (
             <p>No actions available within the next month.</p>
           )}
