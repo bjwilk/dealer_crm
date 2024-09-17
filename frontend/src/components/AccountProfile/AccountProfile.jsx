@@ -45,7 +45,7 @@ export default function AccountProfile() {
     usersActions = profile.actions.flatMap((action) => action);
     accountContacts = profile.contacts.flatMap((contact) => contact);
   }
-
+ 
   const handleRemoveAccount = async (e, accountId) => {
     e.preventDefault();
     try {
@@ -134,6 +134,7 @@ export default function AccountProfile() {
     }
   };
 
+
   function Actions() {
     const filterWeekActions = () => {
       const currentTime = new Date();
@@ -155,8 +156,10 @@ export default function AccountProfile() {
         return actionDate >= currentTime && actionDate <= oneMonthFromNow;
       });
     };
-    const weekActions = filterWeekActions();
-    const monthActions = filterMonthActions();
+    const weekActions = filterWeekActions().sort((a, b) => new Date(a.reminder) - new Date(b.reminder));
+    const monthActions = filterMonthActions().sort((a, b) => new Date(a.reminder) - new Date(b.reminder));
+    const allActions = usersActions.sort((a, b) => new Date(a.reminder) - new Date(b.reminder));
+
 
     return (
       <div className="account-filter">
@@ -193,8 +196,8 @@ export default function AccountProfile() {
             All
           </button>
           {isAllFilter ? (
-            usersActions.length > 0 ? (
-              usersActions.map((action) => (
+            allActions.length > 0 ? (
+              allActions.map((action) => (
                 <div
                   style={{
                     border: "1px solid #ddd",
