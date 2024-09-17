@@ -307,7 +307,7 @@ export const fetchFilterAccounts =
       default:
         throw new Error("Invalid filter type");
     }
-console.log("URL Route", urlRoute)
+// console.log("URL Route", urlRoute)
     try {
       const response = await csrfFetch(urlRoute);
 

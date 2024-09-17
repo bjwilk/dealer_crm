@@ -469,10 +469,16 @@ router.get("/businessType/:business", async (req, res) => {
       ownerId: req.user.id,
       businessType: req.params.business,
     },
-    include: {
+    include:[ 
+      {
       model: Order,
       as: "orders", 
     },
+    {
+      model: Action,
+      as: "actions"
+    }
+  ]
   });
   return res.json(company);
 });
@@ -488,11 +494,17 @@ router.get("/equipmentType/:equipment", requireAuth, async (req, res, next) => {
           [Op.substring]: req.params.equipment,
         },
       },
-      include: {
+      include:[ 
+        {
         model: Order,
         as: "orders", 
       },
-    });
+      {
+        model: Action,
+        as: "actions"
+      }
+    ]
+      });
 
     res.status(200).json(accounts);
   } catch (err) {
@@ -510,10 +522,16 @@ router.get("/companyName/:companyName", requireAuth, async (req, res) => {
         [Op.substring]: companyName,
       },
     },
-    include: {
+    include:[ 
+      {
       model: Order,
       as: "orders", 
     },
+    {
+      model: Action,
+      as: "actions"
+    }
+  ]
   })
     .then((companyName) => {
       res.statusCode = 200;
@@ -533,10 +551,16 @@ router.get("/lookingFor/:equipment", requireAuth, async (req, res, next) => {
         [Op.substring]: req.params.equipment,
       },
     },
-    include: {
+    include:[ 
+      {
       model: Order,
       as: "orders", 
     },
+    {
+      model: Action,
+      as: "actions"
+    }
+  ]
   })
     .then((equipment) => {
       res.statusCode = 200;
@@ -554,6 +578,17 @@ router.get("/location/:city", requireAuth, async (req, res, next) => {
       ownerId: req.user.id,
       city: city,
     },
+    include:[ 
+      {
+      model: Order,
+      as: "orders", 
+    },
+    {
+      model: Action,
+      as: "actions"
+    }
+  ]
+
   })
     .then((accounts) => {
       res.statusCode = 200;
