@@ -29,7 +29,7 @@ export default function DashBoard() {
     return (
       <div className="dashboard">
         <div className="dashboard__not-user">
-          <strong>PLEASE LOGIN TO CONTINUE</strong>
+          <strong>LOGIN TO CONTINUE</strong>
         </div>
       </div>
     );
